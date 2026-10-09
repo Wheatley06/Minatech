@@ -3,6 +3,7 @@ package com.minatech.iot.repository;
 import com.minatech.iot.domain.LecturaTelemetria;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,4 +17,11 @@ public interface LecturaTelemetriaRepository extends JpaRepository<LecturaTeleme
 
     /** Última lectura de cada sensor, para pintar el dashboard general. */
     List<LecturaTelemetria> findTop1BySensorMinaIdOrderByFechaHoraDesc(Long sensorMinaId);
+
+    /**
+     * Las ultimas N lecturas de un sensor (mas reciente primero), para
+     * graficar su historial reciente (lineas/area) en el dashboard.
+     * Se usa con un Pageable del tipo PageRequest.of(0, limite).
+     */
+    List<LecturaTelemetria> findBySensorMinaIdOrderByFechaHoraDesc(Long sensorMinaId, Pageable pageable);
 }

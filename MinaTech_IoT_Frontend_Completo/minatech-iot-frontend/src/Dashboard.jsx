@@ -38,6 +38,8 @@ function Dashboard() {
   const [lecturas, setLecturas] = useStateDash([]);
   const [cargando, setCargando] = useStateDash(true);
   const [error, setError] = useStateDash("");
+  // "tarjetas" (vista por defecto) | "vibracion-gas" | "presion-temp"
+  const [vista, setVista] = useStateDash("tarjetas");
 
   async function cargar() {
     setError("");
@@ -54,15 +56,39 @@ function Dashboard() {
   useEffectDash(() => {
     cargar();
     // Refresco automático cada 15s para reflejar la telemetría MQTT entrante.
-    const intervalo = setInterval(cargar, 1000);
+    const intervalo = setInterval(cargar, 15000);
     return () => clearInterval(intervalo);
   }, []);
 
+  if (vista === "vibracion-gas") {
+    return (
+      <div>
+        <BarraBotonesVista vista={vista} setVista={setVista} />
+        <GraficasVibracionGas />
+      </div>
+    );
+  }
+
+  if (vista === "presion-temp") {
+    return (
+      <div>
+        <BarraBotonesVista vista={vista} setVista={setVista} />
+        <GraficasPresionTemperatura />
+      </div>
+    );
+  }
+
   return (
     <div>
-      <div className="contenido-header">
-        <h1>Dashboard general</h1>
-        <p>Última lectura conocida de cada sensor registrado (se actualiza cada 15 segundos).</p>
+      <div
+        className="contenido-header"
+        style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}
+      >
+        <div>
+          <h1>Dashboard general</h1>
+          <p>Última lectura conocida de cada sensor registrado (se actualiza cada 15 segundos).</p>
+        </div>
+        <BotonesGraficas vista={vista} setVista={setVista} />
       </div>
 
       {error && <div className="mensaje-error">{error}</div>}
@@ -112,6 +138,31 @@ function Dashboard() {
           })}
         </div>
       )}
+    </div>
+  );
+}
+
+/** Los 2 botones de gráficas, en la misma línea que el título "Dashboard general". */
+function BotonesGraficas({ vista, setVista }) {
+  return (
+    <div className="filtros">
+      <button className="filtro-boton" onClick={() => setVista("vibracion-gas")}>
+        📈 Vibración y Gases
+      </button>
+      <button className="filtro-boton" onClick={() => setVista("presion-temp")}>
+        🎛️ Presión y Temperatura
+      </button>
+    </div>
+  );
+}
+
+/** Barra para volver a las tarjetas desde una vista de gráficas. */
+function BarraBotonesVista({ setVista }) {
+  return (
+    <div className="barra-acciones">
+      <button className="boton-secundario" onClick={() => setVista("tarjetas")}>
+        ← Volver al Dashboard
+      </button>
     </div>
   );
 }

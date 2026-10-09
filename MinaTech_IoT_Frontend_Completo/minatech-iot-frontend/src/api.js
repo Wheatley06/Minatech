@@ -84,6 +84,7 @@ const Api = {
 
   listarSensores: () => apiFetch("/api/sensores"),
   crearSensor: (datos) => apiFetch("/api/sensores", { method: "POST", body: datos }),
+  historialSensor: (id, limite = 50) => apiFetch(`/api/sensores/${id}/lecturas?limite=${limite}`),
 
   listarAlertas: (soloPendientes) =>
     apiFetch(soloPendientes ? "/api/alertas?atendida=false" : "/api/alertas"),
