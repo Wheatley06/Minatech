@@ -31,6 +31,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jjwt.version>0.11.5</jjwt.version>
         <paho.version>1.2.5</paho.version>
+        <!-- Necesario para que el boton "Run" de NetBeans sepa cual es la
+             clase principal (sin esto, NetBeans intenta usar exec-maven-plugin
+             con ${start-class} sin resolver y falla con
+             "Could not find or load main class ${start-class}"). -->
+        <start-class>com.minatech.iot.MinatechIotApplication</start-class>
     </properties>
 
     <dependencies>
