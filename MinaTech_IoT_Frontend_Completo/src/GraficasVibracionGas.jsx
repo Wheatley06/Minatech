@@ -12,17 +12,20 @@ function aPuntosDeTiempo(historial) {
 
 function opcionesLinea(titulo, unidad, colores) {
   return {
-    chart: { animations: { easing: "easeinout", speed: 400 } },
-    title: { text: titulo, style: { fontSize: "14px", fontWeight: 600, color: "#1e293b" } },
+    chart: { animations: { easing: "easeinout", speed: 400 }, foreColor: "#8fa6bd" },
+    title: { text: titulo, style: { fontSize: "14px", fontWeight: 600, color: "#e7eef5" } },
     colors: colores,
     stroke: { curve: "smooth", width: 2.5 },
     dataLabels: { enabled: false },
-    grid: { borderColor: "#e2e8f0", strokeDashArray: 3 },
+    grid: { borderColor: "rgba(148, 197, 217, 0.14)", strokeDashArray: 3 },
     xaxis: { type: "datetime", labels: { datetimeUTC: false } },
-    yaxis: { title: { text: unidad }, labels: { formatter: (v) => (v == null ? "" : v.toFixed(1)) } },
-    tooltip: { x: { format: "HH:mm:ss" } },
-    legend: { show: colores.length > 1, position: "top" },
-    noData: { text: "Esperando lecturas..." },
+    yaxis: {
+      title: { text: unidad },
+      labels: { formatter: (v) => (v == null ? "" : v.toFixed(1)), style: { fontFamily: "ui-monospace, Consolas, monospace" } },
+    },
+    tooltip: { x: { format: "HH:mm:ss" }, theme: "dark" },
+    legend: { show: colores.length > 1, position: "top", labels: { colors: "#e7eef5" } },
+    noData: { text: "Esperando lecturas...", style: { color: "#8fa6bd" } },
   };
 }
 

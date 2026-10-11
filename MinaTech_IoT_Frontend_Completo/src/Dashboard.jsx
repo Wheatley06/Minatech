@@ -15,14 +15,26 @@ const COLOR_POR_TIPO = {
 };
 
 function badgeEstadoSimulacion(estado) {
-  if (!estado) return { clase: "badge-sin-datos", texto: "Sin datos" };
+  if (!estado) return { clase: "badge-sin-datos", texto: "Sin datos", sev: "" };
   const mapa = {
-    NORMAL: { clase: "badge-normal", texto: "Normal" },
-    ALERTA: { clase: "badge-alerta", texto: "Alerta" },
-    ADVERTENCIA: { clase: "badge-advertencia", texto: "Advertencia" },
-    CRITICO: { clase: "badge-critico", texto: "Crítico" },
+    NORMAL: { clase: "badge-normal", texto: "Normal", sev: "sev-normal" },
+    ALERTA: { clase: "badge-alerta", texto: "Alerta", sev: "sev-alerta" },
+    ADVERTENCIA: { clase: "badge-advertencia", texto: "Advertencia", sev: "sev-advertencia" },
+    CRITICO: { clase: "badge-critico", texto: "Crítico", sev: "sev-critico" },
   };
-  return mapa[estado.toUpperCase()] || { clase: "badge-alerta", texto: estado };
+  return mapa[estado.toUpperCase()] || { clase: "badge-alerta", texto: estado, sev: "sev-alerta" };
+}
+
+// Una lectura se considera "fresca" (el equipo sigue transmitiendo) si llegó
+// dentro de los últimos 20s — un poco más que el intervalo de refresco del
+// propio dashboard (15s), para no apagar el punto de vida entre un refresco
+// y otro aunque el sensor siga reportando con normalidad.
+const MS_LECTURA_FRESCA = 20000;
+
+function esLecturaFresca(fechaHora) {
+  if (!fechaHora) return false;
+  const edadMs = Date.now() - new Date(fechaHora).getTime();
+  return edadMs >= 0 && edadMs <= MS_LECTURA_FRESCA;
 }
 
 function formatearFechaHora(valor) {
@@ -40,11 +52,39 @@ function Dashboard() {
   const [error, setError] = useStateDash("");
   // "tarjetas" (vista por defecto) | "vibracion-gas" | "presion-temp"
   const [vista, setVista] = useStateDash("tarjetas");
+  // IDs de sensor cuyo valor cambió en el último refresco, para el destello
+  // breve en su tarjeta. Se auto-limpia con un timeout (ver más abajo).
+  const [destellos, setDestellos] = useStateDash({});
+  const valoresPrevios = React.useRef({});
 
   async function cargar() {
     setError("");
     try {
       const datos = await Api.dashboard();
+
+      const cambiados = [];
+      for (const l of datos) {
+        const anterior = valoresPrevios.current[l.sensorId];
+        if (anterior !== undefined && anterior !== l.valor) {
+          cambiados.push(l.sensorId);
+        }
+        valoresPrevios.current[l.sensorId] = l.valor;
+      }
+      if (cambiados.length > 0) {
+        setDestellos((prev) => {
+          const siguiente = { ...prev };
+          cambiados.forEach((id) => (siguiente[id] = true));
+          return siguiente;
+        });
+        setTimeout(() => {
+          setDestellos((prev) => {
+            const siguiente = { ...prev };
+            cambiados.forEach((id) => delete siguiente[id]);
+            return siguiente;
+          });
+        }, 900);
+      }
+
       setLecturas(datos);
     } catch (err) {
       setError(err.message);
@@ -105,12 +145,16 @@ function Dashboard() {
           {lecturas.map((l) => {
             const Icono = Icons[ICONO_POR_TIPO[l.tipoSensor]] || Icons.Sensor;
             const badge = badgeEstadoSimulacion(l.estadoSimulacion);
+            const fresca = esLecturaFresca(l.fechaHora);
+            const claseTarjeta = ["tarjeta-variable", badge.sev, destellos[l.sensorId] ? "destello" : ""]
+              .filter(Boolean)
+              .join(" ");
             return (
-              <div className="tarjeta-variable" key={l.sensorId}>
+              <div className={claseTarjeta} key={l.sensorId}>
                 <div className="tarjeta-variable-top">
                   <div>
                     <div className="tarjeta-variable-nombre">{l.sensorNombre}</div>
-                    <div style={{ fontSize: 12, color: "var(--texto-secundario)" }}>
+                    <div style={{ fontSize: 12, color: "var(--panel-texto-secundario)" }}>
                       {l.equipoNombre || "Sin equipo"}
                     </div>
                   </div>
@@ -130,8 +174,11 @@ function Dashboard() {
                 </div>
 
                 <div className="tarjeta-variable-footer">
-                  <span className={`badge ${badge.clase}`}>{badge.texto}</span>
-                  <div style={{ marginTop: 8 }}>{formatearFechaHora(l.fechaHora)}</div>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                    <span className={`pulso-dot ${fresca ? "vivo" : ""}`} title={fresca ? "Transmitiendo" : "Sin señal reciente"} />
+                    <span className={`badge ${badge.clase}`}>{badge.texto}</span>
+                  </span>
+                  <div>{formatearFechaHora(l.fechaHora)}</div>
                 </div>
               </div>
             );
@@ -156,12 +203,23 @@ function BotonesGraficas({ vista, setVista }) {
   );
 }
 
-/** Barra para volver a las tarjetas desde una vista de gráficas. */
-function BarraBotonesVista({ setVista }) {
+/**
+ * Barra de arriba cuando estás viendo una de las dos pantallas de
+ * gráficas: a la izquierda, volver a las tarjetas; a la derecha, saltar
+ * directo a la otra pantalla de gráficas sin pasar por el Dashboard.
+ */
+function BarraBotonesVista({ vista, setVista }) {
+  const esVibracionGas = vista === "vibracion-gas";
+  const otraVista = esVibracionGas ? "presion-temp" : "vibracion-gas";
+  const etiquetaOtraVista = esVibracionGas ? "🎛️ Ver Presión y Temperatura" : "📈 Ver Vibración y Gases";
+
   return (
     <div className="barra-acciones">
       <button className="boton-secundario" onClick={() => setVista("tarjetas")}>
         ← Volver al Dashboard
+      </button>
+      <button className="filtro-boton" onClick={() => setVista(otraVista)}>
+        {etiquetaOtraVista} →
       </button>
     </div>
   );

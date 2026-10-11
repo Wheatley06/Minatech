@@ -11,6 +11,22 @@
   --naranja: #f59e0b;
   --amarillo: #eab308;
   --verde: #22c55e;
+
+  /* ---------- Panel de control industrial (area post-login) ----------
+     Inspirado en las pantallas de HMI/SCADA de ABB y Siemens: grafito
+     azulado profundo en vez de negro puro, paneles ligeramente mas claros
+     que el fondo (como si estuvieran "iluminados" desde dentro), acentos
+     cian/teal reservados para datos en vivo y estados. No toca Login/Registro. */
+  --panel-fondo-1: #0a141f;
+  --panel-fondo-2: #0f2032;
+  --panel-superficie: #14263b;
+  --panel-superficie-hover: #1a2f47;
+  --panel-borde: rgba(148, 197, 217, 0.14);
+  --panel-borde-fuerte: rgba(148, 197, 217, 0.28);
+  --panel-texto: #e7eef5;
+  --panel-texto-secundario: #8fa6bd;
+  --panel-cian: #22d3ee;
+  --fuente-mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", "Roboto Mono", Consolas, monospace;
 }
 
 * {
@@ -31,7 +47,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--azul-oscuro), var(--azul-medio));
+  /* Foto real de un frente de perforación subterráneo, con un degradado
+     oscuro encima (mismos tonos azules que antes) para que la tarjeta de
+     login/registro siga siendo legible sobre cualquier parte de la imagen. */
+  background-image:
+    linear-gradient(135deg, rgba(16, 27, 45, 0.88), rgba(22, 36, 59, 0.82)),
+    url("assets/auth-fondo-mina.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   padding: 24px;
 }
 
@@ -294,7 +318,21 @@ body {
 
 .contenido {
   flex: 1;
-  padding: 28px 36px;
+  max-width: none;
+  min-height: 100vh;
+  padding: 28px 36px 48px;
+  color: var(--panel-texto);
+  background-color: var(--panel-fondo-1);
+  background-image:
+    radial-gradient(ellipse 900px 520px at 12% -10%, rgba(34, 211, 238, 0.09), transparent 60%),
+    linear-gradient(rgba(148, 197, 217, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 197, 217, 0.055) 1px, transparent 1px),
+    linear-gradient(165deg, var(--panel-fondo-2), var(--panel-fondo-1) 55%);
+  background-size: auto, 44px 44px, 44px 44px, auto;
+  background-position: 0 0, -1px -1px, -1px -1px, 0 0;
+}
+
+.contenido > * {
   max-width: 1200px;
 }
 
@@ -305,22 +343,24 @@ body {
 .contenido-header h1 {
   font-size: 22px;
   margin: 0 0 4px;
-  color: var(--azul-oscuro);
+  color: var(--panel-texto);
+  letter-spacing: -0.01em;
 }
 
 .contenido-header p {
   margin: 0;
-  color: var(--texto-secundario);
+  color: var(--panel-texto-secundario);
   font-size: 14px;
 }
 
 /* ---------- Tarjetas y grillas ---------- */
 
 .tarjeta {
-  background: #fff;
-  border-radius: 12px;
-  border: 1px solid var(--gris-borde);
+  background: linear-gradient(180deg, var(--panel-superficie-hover), var(--panel-superficie));
+  border-radius: 10px;
+  border: 1px solid var(--panel-borde);
   padding: 20px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 16px 32px -16px rgba(0, 0, 0, 0.55);
 }
 
 .grilla-dashboard {
@@ -331,10 +371,34 @@ body {
 }
 
 .tarjeta-variable {
-  background: #fff;
-  border-radius: 12px;
-  border: 1px solid var(--gris-borde);
+  background: linear-gradient(180deg, var(--panel-superficie-hover), var(--panel-superficie));
+  border-radius: 10px;
+  border: 1px solid var(--panel-borde);
+  border-left: 3px solid var(--panel-borde-fuerte);
   padding: 18px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 16px 32px -16px rgba(0, 0, 0, 0.55);
+  position: relative;
+  transition: border-left-color 0.3s ease;
+}
+
+/* Variación de severidad: el borde izquierdo toma el color del estado de la
+   última lectura (se fija por JS vía estilo en línea, leyendo el mismo dato
+   que ya pinta el badge), para que la grilla completa se pueda escanear por
+   color sin leer cada tarjeta una por una. */
+.tarjeta-variable.sev-normal { border-left-color: #22c55e; }
+.tarjeta-variable.sev-advertencia { border-left-color: #f59e0b; }
+.tarjeta-variable.sev-alerta { border-left-color: #eab308; }
+.tarjeta-variable.sev-critico { border-left-color: #ef4444; }
+
+/* Destello breve cuando llega un valor nuevo para ese sensor: ayuda a ver
+   qué tarjeta acaba de actualizarse sin comparar números a ojo. */
+.tarjeta-variable.destello {
+  animation: destelloPanel 900ms ease-out;
+}
+
+@keyframes destelloPanel {
+  0% { box-shadow: 0 0 0 1px var(--panel-cian), 0 0 24px 2px rgba(34, 211, 238, 0.35), 0 16px 32px -16px rgba(0, 0, 0, 0.55); }
+  100% { box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 16px 32px -16px rgba(0, 0, 0, 0.55); }
 }
 
 .tarjeta-variable-top {
@@ -356,19 +420,21 @@ body {
 
 .tarjeta-variable-nombre {
   font-size: 13px;
-  color: var(--texto-secundario);
+  color: var(--panel-texto-secundario);
   font-weight: 600;
 }
 
 .tarjeta-variable-valor {
   font-size: 26px;
   font-weight: 700;
-  color: var(--azul-oscuro);
+  color: var(--panel-texto);
+  font-family: var(--fuente-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .tarjeta-variable-unidad {
   font-size: 13px;
-  color: var(--texto-secundario);
+  color: var(--panel-texto-secundario);
   margin-left: 4px;
   font-weight: 400;
 }
@@ -376,7 +442,32 @@ body {
 .tarjeta-variable-footer {
   margin-top: 10px;
   font-size: 12px;
-  color: var(--texto-secundario);
+  color: var(--panel-texto-secundario);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* Indicador de "pulso" de vida: respira mientras el dato sigue fresco
+   (ver umbral en Dashboard.jsx), se queda apagado y fijo si envejece. */
+.pulso-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #475569;
+}
+
+.pulso-dot.vivo {
+  background: var(--panel-cian);
+  box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.6);
+  animation: pulsoVivo 2s ease-in-out infinite;
+}
+
+@keyframes pulsoVivo {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.45); }
+  50% { opacity: 0.45; box-shadow: 0 0 0 4px rgba(34, 211, 238, 0); }
 }
 
 .badge {
@@ -386,17 +477,18 @@ body {
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
+  border: 1px solid transparent;
 }
 
-.badge-normal { background: #f0fdf4; color: #15803d; }
-.badge-alerta { background: #fef3c7; color: #92400e; }
-.badge-advertencia { background: #ffedd5; color: #9a3412; }
-.badge-critico { background: #fee2e2; color: #b91c1c; }
-.badge-sin-datos { background: #f1f5f9; color: #64748b; }
+.badge-normal { background: rgba(34, 197, 94, 0.14); color: #4ade80; border-color: rgba(34, 197, 94, 0.35); }
+.badge-alerta { background: rgba(234, 179, 8, 0.14); color: #fbd34d; border-color: rgba(234, 179, 8, 0.35); }
+.badge-advertencia { background: rgba(245, 158, 11, 0.14); color: #fbaf4d; border-color: rgba(245, 158, 11, 0.35); }
+.badge-critico { background: rgba(239, 68, 68, 0.16); color: #f87171; border-color: rgba(239, 68, 68, 0.4); }
+.badge-sin-datos { background: rgba(148, 197, 217, 0.1); color: var(--panel-texto-secundario); border-color: var(--panel-borde); }
 
-.badge-bajo { background: #f0fdf4; color: #15803d; }
-.badge-medio { background: #fef3c7; color: #92400e; }
-.badge-alto { background: #ffedd5; color: #9a3412; }
+.badge-bajo { background: rgba(34, 197, 94, 0.14); color: #4ade80; border-color: rgba(34, 197, 94, 0.35); }
+.badge-medio { background: rgba(234, 179, 8, 0.14); color: #fbd34d; border-color: rgba(234, 179, 8, 0.35); }
+.badge-alto { background: rgba(245, 158, 11, 0.14); color: #fbaf4d; border-color: rgba(245, 158, 11, 0.35); }
 
 /* ---------- Tablas ---------- */
 
@@ -413,17 +505,17 @@ table.tabla {
 table.tabla th {
   text-align: left;
   padding: 10px 14px;
-  color: var(--texto-secundario);
+  color: var(--panel-texto-secundario);
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  border-bottom: 1px solid var(--gris-borde);
+  border-bottom: 1px solid var(--panel-borde);
 }
 
 table.tabla td {
   padding: 12px 14px;
-  border-bottom: 1px solid var(--gris-borde);
-  color: var(--texto-principal);
+  border-bottom: 1px solid var(--panel-borde);
+  color: var(--panel-texto);
 }
 
 table.tabla tr:last-child td {
@@ -447,18 +539,24 @@ table.tabla tr:last-child td {
 .filtro-boton {
   padding: 7px 14px;
   border-radius: 999px;
-  border: 1px solid var(--gris-borde);
-  background: #fff;
+  border: 1px solid var(--panel-borde-fuerte);
+  background: rgba(148, 197, 217, 0.06);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  color: var(--texto-secundario);
+  color: var(--panel-texto-secundario);
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.filtro-boton:hover {
+  background: rgba(34, 211, 238, 0.1);
+  color: var(--panel-texto);
 }
 
 .filtro-boton.activo {
-  background: var(--azul-oscuro);
-  color: #fff;
-  border-color: var(--azul-oscuro);
+  background: var(--teal);
+  color: #04221f;
+  border-color: var(--teal);
 }
 
 .boton-mini {
@@ -473,8 +571,51 @@ table.tabla tr:last-child td {
 }
 
 .boton-mini:disabled {
-  background: #cbd5e1;
+  background: #334155;
+  color: #64748b;
   cursor: not-allowed;
+}
+
+.contenido .boton-secundario {
+  background: transparent;
+  border: 1px solid var(--panel-borde-fuerte);
+  color: var(--panel-texto);
+}
+
+.contenido .boton-secundario:hover {
+  background: rgba(148, 197, 217, 0.08);
+  border-color: var(--panel-cian);
+}
+
+.contenido .campo label {
+  color: var(--panel-texto-secundario);
+}
+
+.contenido .campo input,
+.contenido .campo select,
+.contenido .campo textarea {
+  background: rgba(10, 20, 32, 0.55);
+  border: 1px solid var(--panel-borde);
+  color: var(--panel-texto);
+}
+
+.contenido .campo input:focus,
+.contenido .campo select:focus,
+.contenido .campo textarea:focus {
+  border-color: var(--panel-cian);
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15);
+}
+
+.contenido .mensaje-error {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+}
+
+.contenido .mensaje-exito {
+  background: rgba(34, 197, 94, 0.12);
+  border-color: rgba(34, 197, 94, 0.35);
+  color: #86efac;
 }
 
 .dos-columnas-formulario {
@@ -494,14 +635,14 @@ table.tabla tr:last-child td {
 }
 
 .texto-vacio {
-  color: var(--texto-secundario);
+  color: var(--panel-texto-secundario);
   font-size: 14px;
   padding: 24px 0;
   text-align: center;
 }
 
 .cargando {
-  color: var(--texto-secundario);
+  color: var(--panel-texto-secundario);
   font-size: 14px;
   padding: 24px 0;
   text-align: center;

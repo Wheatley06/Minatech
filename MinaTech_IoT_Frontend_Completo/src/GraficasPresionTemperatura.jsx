@@ -25,21 +25,35 @@ function datosGauge(sensor, historial) {
   return { valor, unidad, max, porcentaje };
 }
 
+// Por encima de este % del umbral crítico, el arco del gauge pasa a ámbar;
+// por encima de este otro, a rojo — así el color del instrumento ya avisa
+// de la cercanía al umbral, no solo el número.
+const UMBRAL_AMBAR = 75;
+const UMBRAL_ROJO = 90;
+
+function colorPorProximidadAUmbral(porcentaje, colorBase) {
+  if (porcentaje >= UMBRAL_ROJO) return "#ef4444";
+  if (porcentaje >= UMBRAL_AMBAR) return "#f59e0b";
+  return colorBase;
+}
+
 function opcionesGauge(nombre, datos, color) {
+  const colorArco = colorPorProximidadAUmbral(datos.porcentaje, color);
   return {
     chart: { animations: { easing: "easeinout", speed: 400 } },
-    colors: [color],
+    colors: [colorArco],
     plotOptions: {
       radialBar: {
-        hollow: { size: "55%" },
-        track: { background: "#f1f5f9" },
+        hollow: { size: "55%", background: "transparent" },
+        track: { background: "rgba(148, 197, 217, 0.12)", strokeWidth: "100%" },
         dataLabels: {
-          name: { text: nombre, fontSize: "13px", color: "#64748b", offsetY: -8 },
+          name: { text: nombre, fontSize: "13px", color: "#8fa6bd", offsetY: -8 },
           value: {
             fontSize: "22px",
             fontWeight: 700,
-            color: "#1e293b",
+            color: "#e7eef5",
             offsetY: 4,
+            fontFamily: "ui-monospace, Consolas, monospace",
             formatter: () => `${datos.valor}${datos.unidad ? " " + datos.unidad : ""}`,
           },
         },
@@ -97,18 +111,21 @@ function GraficasPresionTemperatura() {
   }, []);
 
   const opcionesArea = {
-    chart: { animations: { easing: "easeinout", speed: 400 } },
-    title: { text: "Temperatura (1 y 2)", style: { fontSize: "14px", fontWeight: 600, color: "#1e293b" } },
+    chart: { animations: { easing: "easeinout", speed: 400 }, foreColor: "#8fa6bd" },
+    title: { text: "Temperatura (1 y 2)", style: { fontSize: "14px", fontWeight: 600, color: "#e7eef5" } },
     colors: [COLOR_TEMPERATURA_1, COLOR_TEMPERATURA_2],
     stroke: { curve: "smooth", width: 2 },
-    fill: { type: "gradient", gradient: { opacityFrom: 0.35, opacityTo: 0.05 } },
+    fill: { type: "gradient", gradient: { opacityFrom: 0.4, opacityTo: 0.04 } },
     dataLabels: { enabled: false },
-    grid: { borderColor: "#e2e8f0", strokeDashArray: 3 },
+    grid: { borderColor: "rgba(148, 197, 217, 0.14)", strokeDashArray: 3 },
     xaxis: { type: "datetime", labels: { datetimeUTC: false } },
-    yaxis: { title: { text: unidadTemp }, labels: { formatter: (v) => (v == null ? "" : v.toFixed(1)) } },
-    tooltip: { x: { format: "HH:mm:ss" } },
-    legend: { show: true, position: "top" },
-    noData: { text: "Esperando lecturas..." },
+    yaxis: {
+      title: { text: unidadTemp },
+      labels: { formatter: (v) => (v == null ? "" : v.toFixed(1)), style: { fontFamily: "ui-monospace, Consolas, monospace" } },
+    },
+    tooltip: { x: { format: "HH:mm:ss" }, theme: "dark" },
+    legend: { show: true, position: "top", labels: { colors: "#e7eef5" } },
+    noData: { text: "Esperando lecturas...", style: { color: "#8fa6bd" } },
   };
 
   return (

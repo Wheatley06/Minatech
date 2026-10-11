@@ -29,12 +29,21 @@ function ApexChartBox({ options, series, type, height = 260 }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Actualizar solo los datos cuando cambian (sin recrear el gráfico).
+  // Actualizar los datos cuando cambian (sin recrear el gráfico).
+  // Se usa updateOptions (no solo updateSeries) para que también se
+  // refresque cualquier texto calculado con un "formatter" (por ejemplo
+  // el número grande que se ve en el centro de un gauge) — ese texto
+  // depende de los props más recientes, y updateSeries por sí solo no
+  // lo vuelve a recalcular, solo mueve la barra/línea.
+  // Sin arreglo de dependencias a propósito: options y series son objetos
+  // nuevos en cada actualización de datos, así que esto corre justo
+  // cuando el padre trae datos nuevos (cada N segundos), no en cada
+  // render sin motivo.
   useEffectApex(() => {
     if (chartRef.current) {
-      chartRef.current.updateSeries(series);
+      chartRef.current.updateOptions({ ...options, series }, false, true, true);
     }
-  }, [series]);
+  });
 
   return <div ref={contenedorRef}></div>;
 }
