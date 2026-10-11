@@ -85,12 +85,30 @@ public class TelemetriaService {
     private void procesarLectura(EquipoMecanico equipo, String claveVariable, LecturaMqttDto dato, LocalDateTime fechaHora) {
         SensorMina sensor = obtenerOCrearSensor(equipo, claveVariable, dato);
 
+        // Estado de la ULTIMA lectura de este sensor, ANTES de guardar la
+        // nueva. Se usa para saber si este mensaje es una transicion real
+        // (normal -> alerta) o solo una repeticion del mismo estado de
+        // alerta en el que el sensor ya estaba (en cuyo caso no se genera
+        // una alerta nueva, ver mas abajo).
+        String estadoAnterior = lecturaTelemetriaRepository
+                .findTop1BySensorMinaIdOrderByFechaHoraDesc(sensor.getId())
+                .stream()
+                .findFirst()
+                .map(LecturaTelemetria::getEstadoSimulacion)
+                .orElse(null);
+
         LecturaTelemetria lectura = new LecturaTelemetria(sensor, dato.getValor(), dato.getUnidad(), fechaHora);
         lectura.setEstadoSimulacion(dato.getEstadoSimulacion());
         lectura = lecturaTelemetriaRepository.save(lectura);
 
         NivelRiesgo nivelRiesgo = mapearNivelRiesgo(dato.getEstadoSimulacion());
-        if (nivelRiesgo != null) {
+        // Solo se genera una alerta nueva si el sensor ESTABA en NORMAL (o
+        // no tenia lecturas previas) y la lectura actual ya no lo esta. Si
+        // el sensor ya estaba en un estado de alerta y sigue en uno
+        // (aunque cambie de nivel), no se genera una alerta repetida; para
+        // que aparezca una alerta nueva tiene que volver a NORMAL primero.
+        boolean esTransicionDesdeNormal = estadoAnterior == null || "NORMAL".equalsIgnoreCase(estadoAnterior);
+        if (nivelRiesgo != null && esTransicionDesdeNormal) {
             AlertaRiesgo alerta = new AlertaRiesgo(
                     lectura,
                     nivelRiesgo,
