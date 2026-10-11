@@ -96,7 +96,7 @@ function Dashboard() {
   useEffectDash(() => {
     cargar();
     // Refresco automático cada 15s para reflejar la telemetría MQTT entrante.
-    const intervalo = setInterval(cargar, 5000);
+    const intervalo = setInterval(cargar, 15000);
     return () => clearInterval(intervalo);
   }, []);
 

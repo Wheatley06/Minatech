@@ -76,7 +76,7 @@ function GraficasVibracionGas() {
 
   useEffectVG(() => {
     cargar();
-    const intervalo = setInterval(cargar, 1000);
+    const intervalo = setInterval(cargar, 5000);
     return () => clearInterval(intervalo);
   }, []);
 

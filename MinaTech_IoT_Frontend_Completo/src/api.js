@@ -81,9 +81,12 @@ const Api = {
     apiFetch("/api/auth/registro", { method: "POST", body: datos, autenticado: false }),
 
   listarEquipos: () => apiFetch("/api/equipos"),
+  crearEquipo: (datos) => apiFetch("/api/equipos", { method: "POST", body: datos }),
+  actualizarEquipo: (id, datos) => apiFetch(`/api/equipos/${id}`, { method: "PUT", body: datos }),
 
   listarSensores: () => apiFetch("/api/sensores"),
   crearSensor: (datos) => apiFetch("/api/sensores", { method: "POST", body: datos }),
+  actualizarSensor: (id, datos) => apiFetch(`/api/sensores/${id}`, { method: "PUT", body: datos }),
   historialSensor: (id, limite = 50) => apiFetch(`/api/sensores/${id}/lecturas?limite=${limite}`),
 
   listarAlertas: (soloPendientes) =>

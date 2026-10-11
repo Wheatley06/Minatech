@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,6 +35,17 @@ public class SensorMinaController {
     @PostMapping
     public ResponseEntity<SensorMinaResponse> registrar(@Valid @RequestBody SensorMinaRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(sensorMinaService.registrar(request));
+    }
+
+    /**
+     * Edita un sensor existente (nombre, subtipo, ubicación, umbral
+     * crítico). La variable MQTT, el tipo de sensor y el equipo no se
+     * pueden cambiar desde aquí (ver SensorMinaService.actualizar).
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<SensorMinaResponse> actualizar(
+            @PathVariable Long id, @Valid @RequestBody SensorMinaRequest request) {
+        return ResponseEntity.ok(sensorMinaService.actualizar(id, request));
     }
 
     /**

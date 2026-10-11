@@ -62,6 +62,26 @@ public class SensorMinaService {
     }
 
     /**
+     * Edita un sensor ya existente (nombre, subtipo, ubicación y umbral
+     * crítico). La variable MQTT (claveVariable), el tipo de sensor y el
+     * equipo al que pertenece no se pueden cambiar aquí: son la llave que
+     * usa TelemetriaService para enlazar cada mensaje MQTT entrante con su
+     * sensor, y cambiarlos dejaría de enlazar la telemetría correctamente.
+     */
+    public SensorMinaResponse actualizar(Long id, SensorMinaRequest request) {
+        SensorMina sensor = sensorMinaRepository.findById(id)
+                .orElseThrow(() -> new ApiException("No existe un sensor con id " + id, HttpStatus.NOT_FOUND));
+
+        sensor.setNombre(request.getNombre());
+        sensor.setSubtipo(request.getSubtipo());
+        sensor.setUbicacion(request.getUbicacion());
+        sensor.setUmbralCritico(request.getUmbralCritico());
+
+        SensorMina guardado = sensorMinaRepository.save(sensor);
+        return SensorMinaResponse.desde(guardado);
+    }
+
+    /**
      * Las ultimas "limite" lecturas de un sensor, en orden cronologico
      * (mas antigua primero) para que se puedan graficar directamente como
      * una serie de tiempo (lineas / area) en el frontend.
