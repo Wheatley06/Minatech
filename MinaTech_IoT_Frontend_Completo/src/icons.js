@@ -73,6 +73,14 @@ const Icons = {
   ]),
   Llave2: (p) => h(Icono, p, h("path", { d: "M14.7 6.3a4 4 0 1 0-5 5L4 17v3h3l5.7-5.7a4 4 0 0 0 5-5l-2.6 2.6-2-2z" })),
   Check: (p) => h(Icono, p, h("path", { d: "M5 13l4 4L19 7" })),
+  Mapa: (p) => h(Icono, p, [
+    h("path", { key: "a", d: "M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z" }),
+    h("circle", { key: "b", cx: 12, cy: 9.5, r: 2.3 }),
+  ]),
+  Reloj: (p) => h(Icono, p, [
+    h("circle", { key: "a", cx: 12, cy: 12, r: 9 }),
+    h("path", { key: "b", d: "M12 7v5l3.5 2" }),
+  ]),
 };
 
 window.Icons = Icons;

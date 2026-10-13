@@ -6,7 +6,7 @@ const { useState: useStateApp, useEffect: useEffectApp } = React;
 // Riesgo y Plan de Mantenimiento), todas conectadas al backend real.
 // --------------------------------------------------------------------
 
-const PAGINAS_VALIDAS = ["dashboard", "sensores", "alertas", "mantenimiento"];
+const PAGINAS_VALIDAS = ["dashboard", "sensores", "mapa", "alertas", "bitacora", "mantenimiento"];
 const CLAVE_PAGINA = "minatech_pagina";
 
 /** Lee la última pestaña visitada (si hay una guardada y sigue siendo válida), para que un refresh de la página (F5) no te regrese siempre al Dashboard. */
@@ -67,7 +67,9 @@ function App() {
     <Layout usuario={sesion.usuario} paginaActual={pagina} irA={irA} cerrarSesion={manejarLogout}>
       {pagina === "dashboard" && <Dashboard />}
       {pagina === "sensores" && <RegistroSensor />}
+      {pagina === "mapa" && <MapaEquipos />}
       {pagina === "alertas" && <AlertasRiesgo />}
+      {pagina === "bitacora" && <BitacoraEventos />}
       {pagina === "mantenimiento" && <PlanMantenimiento />}
     </Layout>
   );

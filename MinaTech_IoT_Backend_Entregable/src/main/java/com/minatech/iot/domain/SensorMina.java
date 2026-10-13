@@ -15,6 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +69,10 @@ public class SensorMina {
      */
     @Column(name = "umbral_critico")
     private Double umbralCritico;
+
+    /** Momento en que se detectó/registró este sensor por primera vez, para la bitácora de actividad del frontend. */
+    @Column(name = "fecha_creacion", nullable = false)
+    private LocalDateTime fechaCreacion = LocalDateTime.now();
 
     /**
      * Equipo mecanico monitoreado por este sensor.
@@ -161,6 +166,14 @@ public class SensorMina {
 
     public void setUmbralCritico(Double umbralCritico) {
         this.umbralCritico = umbralCritico;
+    }
+
+    public LocalDateTime getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(LocalDateTime fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
     }
 
     public EquipoMecanico getEquipoMecanico() {

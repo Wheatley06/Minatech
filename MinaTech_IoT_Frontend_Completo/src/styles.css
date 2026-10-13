@@ -470,6 +470,174 @@ body {
   50% { opacity: 0.45; box-shadow: 0 0 0 4px rgba(34, 211, 238, 0); }
 }
 
+/* Fila mín/máx/promedio debajo de una gráfica de tendencia — da contexto
+   al valor actual sin tener que leer la curva completa. */
+.stat-mini-fila {
+  display: flex;
+  gap: 14px;
+  font-size: 13px;
+  color: var(--panel-texto);
+  font-family: var(--fuente-mono);
+  font-variant-numeric: tabular-nums;
+  margin-top: 4px;
+}
+
+.stat-mini-etiqueta {
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  color: var(--panel-texto-secundario);
+  margin-right: 3px;
+}
+
+/* ---------- Conectividad por equipo (franja arriba del Dashboard) ---------- */
+
+.franja-conectividad {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.pastilla-equipo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(180deg, var(--panel-superficie-hover), var(--panel-superficie));
+  border: 1px solid var(--panel-borde);
+  border-radius: 999px;
+  padding: 7px 14px 7px 10px;
+  font-size: 13px;
+  color: var(--panel-texto-secundario);
+}
+
+.pastilla-equipo-nombre {
+  color: var(--panel-texto);
+  font-weight: 600;
+}
+
+.pastilla-equipo-punto {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.pastilla-equipo-punto.completo { background: #4ade80; box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.18); }
+.pastilla-equipo-punto.parcial { background: #fbaf4d; box-shadow: 0 0 0 3px rgba(251, 175, 77, 0.18); }
+.pastilla-equipo-punto.caido { background: #f87171; box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.18); }
+
+/* ---------- Mapa / plano de equipos ---------- */
+
+.mapa-equipos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.nodo-equipo {
+  background: linear-gradient(180deg, var(--panel-superficie-hover), var(--panel-superficie));
+  border-radius: 10px;
+  border: 1px solid var(--panel-borde);
+  border-top: 3px solid var(--panel-borde-fuerte);
+  padding: 18px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 16px 32px -16px rgba(0, 0, 0, 0.55);
+}
+
+.nodo-equipo.completo { border-top-color: #22c55e; }
+.nodo-equipo.parcial { border-top-color: #f59e0b; }
+.nodo-equipo.caido { border-top-color: #ef4444; }
+
+.nodo-equipo-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.nodo-equipo-nombre {
+  font-weight: 700;
+  color: var(--panel-texto);
+  font-size: 15px;
+}
+
+.nodo-equipo-sensores {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nodo-equipo-sensor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--panel-texto-secundario);
+}
+
+.nodo-equipo-sensor-punto {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #475569;
+}
+
+.nodo-equipo-sensor-punto.vivo {
+  background: var(--panel-cian);
+}
+
+/* ---------- Bitácora de actividad ---------- */
+
+.linea-tiempo {
+  display: flex;
+  flex-direction: column;
+}
+
+.evento-tiempo {
+  position: relative;
+  padding: 0 0 20px 22px;
+  border-left: 2px solid var(--panel-borde);
+  margin-left: 5px;
+}
+
+.evento-tiempo:last-child {
+  border-left-color: transparent;
+  padding-bottom: 0;
+}
+
+.evento-tiempo-punto {
+  position: absolute;
+  left: -6px;
+  top: 2px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid var(--panel-fondo-1);
+}
+
+.evento-tiempo-punto.alerta { background: #f87171; }
+.evento-tiempo-punto.sensor { background: var(--panel-cian); }
+.evento-tiempo-punto.equipo { background: #a855f7; }
+
+.evento-tiempo-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 2px;
+}
+
+.evento-tiempo-texto {
+  color: var(--panel-texto);
+  font-size: 14px;
+}
+
+.evento-tiempo-hora {
+  font-size: 12px;
+  color: var(--panel-texto-secundario);
+  font-family: var(--fuente-mono);
+}
+
 .badge {
   display: inline-flex;
   align-items: center;
@@ -646,4 +814,230 @@ table.tabla tr:last-child td {
   font-size: 14px;
   padding: 24px 0;
   text-align: center;
+}
+
+/* ---------- Resumen de conectividad por equipo (Dashboard) ---------- */
+
+.resumen-conectividad {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.chip-equipo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: var(--panel-superficie);
+  border: 1px solid var(--panel-borde);
+  font-size: 13px;
+  color: var(--panel-texto-secundario);
+}
+
+.chip-equipo-nombre {
+  color: var(--panel-texto);
+  font-weight: 600;
+}
+
+.chip-equipo-conteo {
+  font-family: var(--fuente-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.chip-equipo-punto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.chip-equipo.todo-bien .chip-equipo-punto { background: #4ade80; }
+.chip-equipo.parcial .chip-equipo-punto { background: #fbaf4d; }
+.chip-equipo.sin-senal .chip-equipo-punto { background: #f87171; }
+
+/* ---------- Estadísticas min/máx/promedio (pantallas de gráficas) ---------- */
+
+.fila-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.stat-chip {
+  flex: 1;
+  min-width: 110px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(148, 197, 217, 0.06);
+  border: 1px solid var(--panel-borde);
+}
+
+.stat-chip-etiqueta {
+  font-size: 11px;
+  color: var(--panel-texto-secundario);
+  margin-bottom: 2px;
+}
+
+.stat-chip-valor {
+  font-family: var(--fuente-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--panel-texto);
+}
+
+/* ---------- Mapa de Equipos (plano esquemático) ---------- */
+
+.plano-equipos {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1112 / 784; /* proporción real del plano, para que las posiciones X/Y calcen con el dibujo */
+  min-height: 360px;
+  border-radius: 12px;
+  border: 1px solid var(--panel-borde);
+  background-color: var(--panel-fondo-1);
+  /* Plano geográfico real del proyecto (sin la grilla de coordenadas verde
+     original, limpiada por procesamiento de imagen) de fondo, con la
+     cuadrícula técnica del tema (la misma de las otras pantallas) encima,
+     para mantener el look de "panel industrial" sobre el plano real. */
+  background-image:
+    linear-gradient(rgba(148, 197, 217, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 197, 217, 0.12) 1px, transparent 1px),
+    linear-gradient(rgba(10, 20, 31, 0.15), rgba(10, 20, 31, 0.15)),
+    url("assets/plano-mina.png");
+  background-size: 32px 32px, 32px 32px, cover, cover;
+  background-position: -1px -1px, -1px -1px, center, center;
+  background-repeat: repeat, repeat, no-repeat, no-repeat;
+  overflow: hidden;
+}
+
+.nodo-equipo {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: default;
+}
+
+.nodo-equipo-punto {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--panel-fondo-1);
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.12);
+}
+
+.nodo-equipo.todo-bien .nodo-equipo-punto { background: #22c55e; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18); }
+.nodo-equipo.parcial .nodo-equipo-punto { background: #f59e0b; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18); }
+.nodo-equipo.sin-senal .nodo-equipo-punto { background: #ef4444; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18); }
+
+.nodo-equipo-etiqueta {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--panel-texto);
+  background: rgba(10, 20, 31, 0.85);
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+  border: 1px solid var(--panel-borde);
+}
+
+.plano-leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--panel-texto-secundario);
+}
+
+.plano-leyenda span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.plano-leyenda .punto {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.grilla-sin-posicion {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+/* ---------- Bitácora de Eventos ---------- */
+
+.linea-tiempo {
+  display: flex;
+  flex-direction: column;
+}
+
+.evento-fila {
+  display: flex;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--panel-borde);
+}
+
+.evento-fila:last-child {
+  border-bottom: none;
+}
+
+.evento-marcador {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.evento-marcador.tipo-alerta { background: rgba(239, 68, 68, 0.14); color: #f87171; }
+.evento-marcador.tipo-equipo { background: rgba(34, 211, 238, 0.14); color: var(--panel-cian); }
+.evento-marcador.tipo-sensor { background: rgba(34, 197, 94, 0.14); color: #4ade80; }
+
+.evento-cuerpo {
+  flex: 1;
+  min-width: 0;
+}
+
+.evento-titulo {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--panel-texto);
+  margin-bottom: 2px;
+}
+
+.evento-descripcion {
+  font-size: 13px;
+  color: var(--panel-texto-secundario);
+}
+
+.evento-fecha {
+  font-size: 12px;
+  color: var(--panel-texto-secundario);
+  font-family: var(--fuente-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  margin-left: 12px;
+}
+
+.evento-fila-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
 }

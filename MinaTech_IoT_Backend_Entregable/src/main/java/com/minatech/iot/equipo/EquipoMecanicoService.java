@@ -45,6 +45,8 @@ public class EquipoMecanicoService {
         if (request.getEstado() != null) {
             equipo.setEstado(request.getEstado());
         }
+        equipo.setPosX(request.getPosX());
+        equipo.setPosY(request.getPosY());
 
         return EquipoMecanicoResponse.desde(equipoMecanicoRepository.save(equipo));
     }
@@ -59,6 +61,13 @@ public class EquipoMecanicoService {
         equipo.setModelo(request.getModelo());
         if (request.getEstado() != null) {
             equipo.setEstado(request.getEstado());
+        }
+        // Solo se actualiza la posición si el request trae alguna de las dos
+        // coordenadas; así el formulario de edición normal (que no toca el
+        // mapa) no borra sin querer una posición ya configurada.
+        if (request.getPosX() != null || request.getPosY() != null) {
+            equipo.setPosX(request.getPosX());
+            equipo.setPosY(request.getPosY());
         }
 
         return EquipoMecanicoResponse.desde(equipoMecanicoRepository.save(equipo));

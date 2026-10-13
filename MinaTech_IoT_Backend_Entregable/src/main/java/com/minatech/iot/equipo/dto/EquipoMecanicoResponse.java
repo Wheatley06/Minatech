@@ -2,6 +2,7 @@ package com.minatech.iot.equipo.dto;
 
 import com.minatech.iot.domain.EquipoMecanico;
 import com.minatech.iot.domain.EstadoEquipo;
+import java.time.LocalDateTime;
 
 /** Vista simplificada de un EquipoMecanico, usada para listas y dropdowns del frontend. */
 public class EquipoMecanicoResponse {
@@ -12,6 +13,9 @@ public class EquipoMecanicoResponse {
     private String marca;
     private String modelo;
     private EstadoEquipo estado;
+    private LocalDateTime fechaCreacion;
+    private Double posX;
+    private Double posY;
 
     public static EquipoMecanicoResponse desde(EquipoMecanico equipo) {
         EquipoMecanicoResponse r = new EquipoMecanicoResponse();
@@ -21,6 +25,9 @@ public class EquipoMecanicoResponse {
         r.marca = equipo.getMarca();
         r.modelo = equipo.getModelo();
         r.estado = equipo.getEstado();
+        r.fechaCreacion = equipo.getFechaCreacion();
+        r.posX = equipo.getPosX();
+        r.posY = equipo.getPosY();
         return r;
     }
 
@@ -46,5 +53,17 @@ public class EquipoMecanicoResponse {
 
     public EstadoEquipo getEstado() {
         return estado;
+    }
+
+    public LocalDateTime getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public Double getPosX() {
+        return posX;
+    }
+
+    public Double getPosY() {
+        return posY;
     }
 }

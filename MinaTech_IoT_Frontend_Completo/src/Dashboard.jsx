@@ -37,6 +37,28 @@ function esLecturaFresca(fechaHora) {
   return edadMs >= 0 && edadMs <= MS_LECTURA_FRESCA;
 }
 
+/**
+ * Agrupa las lecturas del dashboard por equipo y cuenta cuántos de sus
+ * sensores siguen "frescos" (transmitiendo), para un resumen rápido de
+ * conectividad por equipo — típico de un panel IoT: no solo importa el
+ * valor de cada sensor, sino si el equipo entero sigue reportando.
+ */
+function resumenConectividadPorEquipo(lecturas) {
+  const porEquipo = new Map();
+  for (const l of lecturas) {
+    const clave = l.equipoNombre || "Sin equipo";
+    if (!porEquipo.has(clave)) {
+      porEquipo.set(clave, { nombre: clave, total: 0, frescos: 0 });
+    }
+    const entrada = porEquipo.get(clave);
+    entrada.total += 1;
+    if (esLecturaFresca(l.fechaHora)) {
+      entrada.frescos += 1;
+    }
+  }
+  return Array.from(porEquipo.values());
+}
+
 function formatearFechaHora(valor) {
   if (!valor) return "Sin lecturas aún";
   try {
@@ -141,7 +163,21 @@ function Dashboard() {
           o espera a que llegue telemetría MQTT (los sensores se crean automáticamente).
         </div>
       ) : (
-        <div className="grilla-dashboard">
+        <div>
+          <div className="resumen-conectividad">
+            {resumenConectividadPorEquipo(lecturas).map((eq) => {
+              const estado = eq.frescos === eq.total ? "todo-bien" : eq.frescos === 0 ? "sin-senal" : "parcial";
+              return (
+                <div key={eq.nombre} className={`chip-equipo ${estado}`}>
+                  <span className="chip-equipo-punto" />
+                  <span className="chip-equipo-nombre">{eq.nombre}</span>
+                  <span className="chip-equipo-conteo">{eq.frescos}/{eq.total} en línea</span>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="grilla-dashboard">
           {lecturas.map((l) => {
             const Icono = Icons[ICONO_POR_TIPO[l.tipoSensor]] || Icons.Sensor;
             const badge = badgeEstadoSimulacion(l.estadoSimulacion);
@@ -183,6 +219,7 @@ function Dashboard() {
               </div>
             );
           })}
+          </div>
         </div>
       )}
     </div>

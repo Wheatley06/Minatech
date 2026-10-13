@@ -13,7 +13,16 @@ const ESTADOS_EQUIPO = [
   { valor: "FUERA_DE_SERVICIO", texto: "Fuera de servicio" },
 ];
 
-const FORM_EQUIPO_VACIO = { id: "", nombre: "", tipoEquipo: "", marca: "", modelo: "", estado: "OPERATIVO" };
+const FORM_EQUIPO_VACIO = {
+  id: "",
+  nombre: "",
+  tipoEquipo: "",
+  marca: "",
+  modelo: "",
+  estado: "OPERATIVO",
+  posX: "",
+  posY: "",
+};
 
 const FORM_SENSOR_VACIO = {
   nombre: "",
@@ -165,6 +174,8 @@ function RegistroSensor() {
       marca: equipo.marca || "",
       modelo: equipo.modelo || "",
       estado: equipo.estado || "OPERATIVO",
+      posX: equipo.posX ?? "",
+      posY: equipo.posY ?? "",
     });
   }
 
@@ -188,6 +199,8 @@ function RegistroSensor() {
         marca: formEquipo.marca || null,
         modelo: formEquipo.modelo || null,
         estado: formEquipo.estado,
+        posX: formEquipo.posX !== "" ? Number(formEquipo.posX) : null,
+        posY: formEquipo.posY !== "" ? Number(formEquipo.posY) : null,
       };
       if (equipoEditandoId) {
         await Api.actualizarEquipo(equipoEditandoId, payload);
@@ -441,6 +454,35 @@ function RegistroSensor() {
                   <label>Modelo (opcional)</label>
                   <input value={formEquipo.modelo} onChange={(e) => actualizarCampoEquipo("modelo", e.target.value)} />
                 </div>
+              </div>
+
+              <div className="fila-dos-columnas">
+                <div className="campo">
+                  <label>Posición X en el mapa (0-100, opcional)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={formEquipo.posX}
+                    onChange={(e) => actualizarCampoEquipo("posX", e.target.value)}
+                    placeholder="ej. 30"
+                  />
+                </div>
+                <div className="campo">
+                  <label>Posición Y en el mapa (0-100, opcional)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={formEquipo.posY}
+                    onChange={(e) => actualizarCampoEquipo("posY", e.target.value)}
+                    placeholder="ej. 60"
+                  />
+                </div>
+              </div>
+              <div style={{ fontSize: 12, color: "var(--panel-texto-secundario)", marginTop: -8, marginBottom: 16 }}>
+                Define dónde aparece este equipo en "Mapa de Equipos" (0 = izquierda/arriba, 100 = derecha/abajo). Si lo
+                dejas vacío, aparece en la fila de equipos "sin posición" al pie del mapa.
               </div>
 
               <div style={{ display: "flex", gap: 10 }}>

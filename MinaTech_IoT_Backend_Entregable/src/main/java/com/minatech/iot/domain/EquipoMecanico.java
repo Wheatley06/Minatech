@@ -12,6 +12,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +45,22 @@ public class EquipoMecanico {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private EstadoEquipo estado = EstadoEquipo.OPERATIVO;
+
+    /** Momento en que se detectó/registró este equipo por primera vez, para la bitácora de actividad del frontend. */
+    @Column(name = "fecha_creacion", nullable = false)
+    private LocalDateTime fechaCreacion = LocalDateTime.now();
+
+    /**
+     * Posición (0-100, porcentaje del ancho/alto del plano) para ubicar
+     * este equipo en el "Mapa de Equipos" esquemático del frontend. Null
+     * mientras nadie la haya configurado desde el panel de administración;
+     * el frontend los acomoda en una grilla de reserva en ese caso.
+     */
+    @Column(name = "pos_x")
+    private Double posX;
+
+    @Column(name = "pos_y")
+    private Double posY;
 
     /**
      * Un equipo mecanico es monitoreado por varios sensores (1 a N).
@@ -115,6 +132,30 @@ public class EquipoMecanico {
 
     public void setEstado(EstadoEquipo estado) {
         this.estado = estado;
+    }
+
+    public LocalDateTime getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(LocalDateTime fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
+    public Double getPosX() {
+        return posX;
+    }
+
+    public void setPosX(Double posX) {
+        this.posX = posX;
+    }
+
+    public Double getPosY() {
+        return posY;
+    }
+
+    public void setPosY(Double posY) {
+        this.posY = posY;
     }
 
     public List<SensorMina> getSensores() {

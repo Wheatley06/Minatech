@@ -1,7 +1,9 @@
 const PAGINAS = [
   { id: "dashboard", titulo: "Dashboard general", icono: "Dashboard" },
   { id: "sensores", titulo: "Equipos y Sensores", icono: "Equipo" },
+  { id: "mapa", titulo: "Mapa de Equipos", icono: "Mapa" },
   { id: "alertas", titulo: "Alertas de Riesgo", icono: "Alerta" },
+  { id: "bitacora", titulo: "Bitácora de Eventos", icono: "Reloj" },
   { id: "mantenimiento", titulo: "Plan de Mantenimiento", icono: "Llave2" },
 ];
 

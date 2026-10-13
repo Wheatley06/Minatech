@@ -25,6 +25,10 @@ public class EquipoMecanicoRequest {
 
     private EstadoEquipo estado;
 
+    /** Posición (0-100) en el "Mapa de Equipos" esquemático del frontend; null = sin posición asignada. */
+    private Double posX;
+    private Double posY;
+
     public Long getId() {
         return id;
     }
@@ -71,5 +75,21 @@ public class EquipoMecanicoRequest {
 
     public void setEstado(EstadoEquipo estado) {
         this.estado = estado;
+    }
+
+    public Double getPosX() {
+        return posX;
+    }
+
+    public void setPosX(Double posX) {
+        this.posX = posX;
+    }
+
+    public Double getPosY() {
+        return posY;
+    }
+
+    public void setPosY(Double posY) {
+        this.posY = posY;
     }
 }

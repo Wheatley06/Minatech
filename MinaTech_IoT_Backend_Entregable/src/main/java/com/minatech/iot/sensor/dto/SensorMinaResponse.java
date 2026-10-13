@@ -3,6 +3,7 @@ package com.minatech.iot.sensor.dto;
 import com.minatech.iot.domain.EstadoSensor;
 import com.minatech.iot.domain.SensorMina;
 import com.minatech.iot.domain.TipoSensor;
+import java.time.LocalDateTime;
 
 public class SensorMinaResponse {
 
@@ -16,6 +17,7 @@ public class SensorMinaResponse {
     private Double umbralCritico;
     private Long equipoId;
     private String equipoNombre;
+    private LocalDateTime fechaCreacion;
 
     public static SensorMinaResponse desde(SensorMina sensor) {
         SensorMinaResponse r = new SensorMinaResponse();
@@ -27,6 +29,7 @@ public class SensorMinaResponse {
         r.ubicacion = sensor.getUbicacion();
         r.estado = sensor.getEstado();
         r.umbralCritico = sensor.getUmbralCritico();
+        r.fechaCreacion = sensor.getFechaCreacion();
         if (sensor.getEquipoMecanico() != null) {
             r.equipoId = sensor.getEquipoMecanico().getId();
             r.equipoNombre = sensor.getEquipoMecanico().getNombre();
@@ -72,5 +75,9 @@ public class SensorMinaResponse {
 
     public String getEquipoNombre() {
         return equipoNombre;
+    }
+
+    public LocalDateTime getFechaCreacion() {
+        return fechaCreacion;
     }
 }

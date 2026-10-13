@@ -97,4 +97,6 @@ const Api = {
   crearPlan: (datos) => apiFetch("/api/planes", { method: "POST", body: datos }),
 
   dashboard: () => apiFetch("/api/dashboard"),
+
+  eventos: (limite = 100) => apiFetch(`/api/eventos?limite=${limite}`),
 };

@@ -9,6 +9,45 @@ function aPuntosDeTiempo(historial) {
   return (historial || []).map((h) => [new Date(h.fechaHora).getTime(), h.valor]);
 }
 
+/** Mín / máx / promedio de un historial reciente, para dar contexto al valor actual (patrón típico de dashboards IoT). */
+function estadisticas(historial) {
+  if (!historial || historial.length === 0) return null;
+  const valores = historial.map((h) => h.valor);
+  const min = Math.min(...valores);
+  const max = Math.max(...valores);
+  const promedio = valores.reduce((a, b) => a + b, 0) / valores.length;
+  return { min, max, promedio };
+}
+
+function FilaEstadisticas({ stats, unidad }) {
+  if (!stats) return null;
+  const fmt = (v) => `${v.toFixed(1)}${unidad ? " " + unidad : ""}`;
+  return (
+    <div className="stat-mini-fila">
+      <span><span className="stat-mini-etiqueta">Mín</span> {fmt(stats.min)}</span>
+      <span><span className="stat-mini-etiqueta">Máx</span> {fmt(stats.max)}</span>
+      <span><span className="stat-mini-etiqueta">Prom</span> {fmt(stats.promedio)}</span>
+    </div>
+  );
+}
+
+/** Línea horizontal punteada en el umbral crítico del sensor, si está configurado (ver pantalla "Equipos y Sensores"). */
+function anotacionesUmbral(sensores, color) {
+  const lineas = sensores
+    .filter((s) => s && s.umbralCritico != null)
+    .map((s) => ({
+      y: s.umbralCritico,
+      borderColor: color,
+      strokeDashArray: 5,
+      label: {
+        text: `Umbral ${s.nombre}`,
+        style: { color: "#0a141f", background: color, fontSize: "11px" },
+        position: "left",
+      },
+    }));
+  return lineas.length > 0 ? { yaxis: lineas } : undefined;
+}
+
 /**
  * Arma los datos de un gauge (radialBar) a partir de la última lectura de
  * un sensor. Como todavía no hay un rango min/max configurable por sensor,
@@ -71,11 +110,14 @@ function GraficasPresionTemperatura() {
   const [gaugeP2, setGaugeP2] = useStatePT(null);
   const [serieTemp, setSerieTemp] = useStatePT([]);
   const [unidadTemp, setUnidadTemp] = useStatePT("°C");
+  const [statsTemp, setStatsTemp] = useStatePT({ t1: null, t2: null });
+  const [sensoresClave, setSensoresClave] = useStatePT({});
 
   async function cargar() {
     try {
       const sensores = await Api.listarSensores();
       const porClave = Object.fromEntries(sensores.map((s) => [s.claveVariable, s]));
+      setSensoresClave(porClave);
 
       const p1 = porClave["presion_1"];
       const p2 = porClave["presion_2"];
@@ -96,6 +138,7 @@ function GraficasPresionTemperatura() {
         { name: "Temperatura 2" + (t2 && t2.subtipo ? ` (${t2.subtipo})` : ""), data: aPuntosDeTiempo(histT2) },
       ]);
       setUnidadTemp((histT1[0] || histT2[0] || {}).unidadMedida || "°C");
+      setStatsTemp({ t1: estadisticas(histT1), t2: estadisticas(histT2) });
       setError("");
     } catch (err) {
       setError(err.message);
@@ -109,6 +152,9 @@ function GraficasPresionTemperatura() {
     const intervalo = setInterval(cargar, 5000);
     return () => clearInterval(intervalo);
   }, []);
+
+  const t1 = sensoresClave["temperatura_1"];
+  const t2 = sensoresClave["temperatura_2"];
 
   const opcionesArea = {
     chart: { animations: { easing: "easeinout", speed: 400 }, foreColor: "#8fa6bd" },
@@ -126,6 +172,10 @@ function GraficasPresionTemperatura() {
     tooltip: { x: { format: "HH:mm:ss" }, theme: "dark" },
     legend: { show: true, position: "top", labels: { colors: "#e7eef5" } },
     noData: { text: "Esperando lecturas...", style: { color: "#8fa6bd" } },
+    ...(() => {
+      const anotaciones = anotacionesUmbral([t1, t2].filter(Boolean), COLOR_TEMPERATURA_1);
+      return anotaciones ? { annotations: anotaciones } : {};
+    })(),
   };
 
   return (
@@ -163,6 +213,20 @@ function GraficasPresionTemperatura() {
           </div>
           <div className="tarjeta">
             <ApexChartBox type="area" series={serieTemp} options={opcionesArea} />
+            <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
+              {statsTemp.t1 && (
+                <div>
+                  <span style={{ fontSize: 12, color: "var(--panel-texto-secundario)" }}>Temperatura 1</span>
+                  <FilaEstadisticas stats={statsTemp.t1} unidad={unidadTemp} />
+                </div>
+              )}
+              {statsTemp.t2 && (
+                <div>
+                  <span style={{ fontSize: 12, color: "var(--panel-texto-secundario)" }}>Temperatura 2</span>
+                  <FilaEstadisticas stats={statsTemp.t2} unidad={unidadTemp} />
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
