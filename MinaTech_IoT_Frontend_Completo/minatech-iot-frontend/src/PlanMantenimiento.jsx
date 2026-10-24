@@ -93,7 +93,12 @@ function PlanMantenimiento() {
 
       <div className="dos-columnas-formulario">
         <div className="tarjeta">
-          {equipos.length === 0 && !cargando ? (
+          {!tienePermiso("programarMantenimiento") ? (
+            <div className="texto-vacio">
+              Tu rol solo permite consultar los planes. Programar mantenimiento requiere el rol Jefe de
+              Operaciones o Administrador.
+            </div>
+          ) : equipos.length === 0 && !cargando ? (
             <div className="texto-vacio">
               Todavía no hay equipos mecánicos. Se crean automáticamente cuando llega la primera
               telemetría MQTT de cada equipo.

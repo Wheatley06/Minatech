@@ -19,7 +19,7 @@ function Layout({ usuario, paginaActual, irA, cerrarSesion, children }) {
         </div>
 
         <nav className="sidebar-nav">
-          {PAGINAS.map((pagina) => {
+          {PAGINAS.filter((p) => p.id !== "sensores" || tienePermiso("administrarEquipos")).map((pagina) => {
             const Icono = Icons[pagina.icono];
             return (
               <button

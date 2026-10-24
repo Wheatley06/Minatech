@@ -20,6 +20,20 @@ function obtenerSesion() {
   }
 }
 
+// Permisos por rol (deben coincidir con las reglas de SecurityConfig.java).
+// El backend es quien realmente los hace cumplir; aqui solo se oculta la UI.
+const ROLES_PERMITIDOS = {
+  atenderAlertas: ["JEFE_OPERACIONES", "ADMINISTRADOR"],
+  programarMantenimiento: ["JEFE_OPERACIONES", "ADMINISTRADOR"],
+  administrarEquipos: ["ADMINISTRADOR"],
+};
+
+function tienePermiso(accion) {
+  const sesion = obtenerSesion();
+  const rol = sesion && sesion.usuario ? sesion.usuario.rol : null;
+  return (ROLES_PERMITIDOS[accion] || []).includes(rol);
+}
+
 function guardarSesion(token, usuario) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify({ token, usuario }));
 }

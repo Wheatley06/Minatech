@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MinaTech IoT</title>
+  <link rel="stylesheet" href="src/styles.css" />
+
+  <!--
+    Este frontend es React real, pero SIN paso de build (sin npm install /
+    Vite / webpack): React, ReactDOM y Babel se cargan desde CDN y el
+    navegador transpila el JSX al vuelo. Se eligió este enfoque porque,
+    en el entorno donde se generó este proyecto, no había acceso a los
+    registros de paquetes npm para instalar dependencias.
+
+    Funciona igual de bien para entregar y probar el proyecto. Si más
+    adelante se quiere migrar a un proyecto Vite/Create-React-App con
+    "npm install", los componentes .jsx de la carpeta src/ se pueden
+    reutilizar casi tal cual.
+  -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!--
+    ApexCharts para las gráficas del Dashboard (líneas, área, gauge).
+    Se eligió por encima de Recharts porque Recharts NO tiene un build UMD
+    confiable para usar por CDN sin bundler (ver issue abierto sin resolver:
+    https://github.com/recharts/recharts/issues/1498 - window.Recharts
+    queda undefined). ApexCharts sí está pensado para usarse así, con
+    <script src="..."> directo, sin necesitar React ni ningún wrapper.
+  -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+  <!--
+    Leaflet para el "Mapa Satelital" de Mapa de Equipos. Es la misma
+    libreria que usa node-red-contrib-web-worldmap: gratis y sin API key.
+    Las capas base (OpenStreetMap, satelite Esri, relieve OpenTopoMap,
+    etc.) son servidores de teselas publicos.
+  -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- Utilidades (sin JSX) -->
+  <script src="src/icons.js"></script>
+  <script src="src/api.js"></script>
+
+  <!-- Componentes (con JSX, transpilados por Babel en el navegador) -->
+  <script type="text/babel" src="src/Login.jsx"></script>
+  <script type="text/babel" src="src/Registro.jsx"></script>
+  <script type="text/babel" src="src/Layout.jsx"></script>
+  <script type="text/babel" src="src/ApexChartBox.jsx"></script>
+  <script type="text/babel" src="src/GraficasVibracionGas.jsx"></script>
+  <script type="text/babel" src="src/GraficasPresionTemperatura.jsx"></script>
+  <script type="text/babel" src="src/Dashboard.jsx"></script>
+  <script type="text/babel" src="src/RegistroSensor.jsx"></script>
+  <script type="text/babel" src="src/MapaEquipos.jsx"></script>
+  <script type="text/babel" src="src/AlertasRiesgo.jsx"></script>
+  <script type="text/babel" src="src/BitacoraEventos.jsx"></script>
+  <script type="text/babel" src="src/PlanMantenimiento.jsx"></script>
+  <script type="text/babel" src="src/App.jsx"></script>
+</body>
+</html>

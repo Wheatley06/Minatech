@@ -22,6 +22,8 @@ const FORM_EQUIPO_VACIO = {
   estado: "OPERATIVO",
   posX: "",
   posY: "",
+  latitud: "",
+  longitud: "",
 };
 
 const FORM_SENSOR_VACIO = {
@@ -176,6 +178,8 @@ function RegistroSensor() {
       estado: equipo.estado || "OPERATIVO",
       posX: equipo.posX ?? "",
       posY: equipo.posY ?? "",
+      latitud: equipo.latitud ?? "",
+      longitud: equipo.longitud ?? "",
     });
   }
 
@@ -201,6 +205,8 @@ function RegistroSensor() {
         estado: formEquipo.estado,
         posX: formEquipo.posX !== "" ? Number(formEquipo.posX) : null,
         posY: formEquipo.posY !== "" ? Number(formEquipo.posY) : null,
+        latitud: formEquipo.latitud !== "" ? Number(formEquipo.latitud) : null,
+        longitud: formEquipo.longitud !== "" ? Number(formEquipo.longitud) : null,
       };
       if (equipoEditandoId) {
         await Api.actualizarEquipo(equipoEditandoId, payload);
@@ -483,6 +489,36 @@ function RegistroSensor() {
               <div style={{ fontSize: 12, color: "var(--panel-texto-secundario)", marginTop: -8, marginBottom: 16 }}>
                 Define dónde aparece este equipo en "Mapa de Equipos" (0 = izquierda/arriba, 100 = derecha/abajo). Si lo
                 dejas vacío, aparece en la fila de equipos "sin posición" al pie del mapa.
+              </div>
+
+              <div className="fila-dos-columnas">
+                <div className="campo">
+                  <label>Latitud (Mapa Satelital, opcional)</label>
+                  <input
+                    type="number"
+                    step="any"
+                    min="-90"
+                    max="90"
+                    value={formEquipo.latitud}
+                    onChange={(e) => actualizarCampoEquipo("latitud", e.target.value)}
+                    placeholder="ej. -15.8402"
+                  />
+                </div>
+                <div className="campo">
+                  <label>Longitud (Mapa Satelital, opcional)</label>
+                  <input
+                    type="number"
+                    step="any"
+                    min="-180"
+                    max="180"
+                    value={formEquipo.longitud}
+                    onChange={(e) => actualizarCampoEquipo("longitud", e.target.value)}
+                    placeholder="ej. -70.0219"
+                  />
+                </div>
+              </div>
+              <div style={{ fontSize: 12, color: "var(--panel-texto-secundario)", marginTop: -8, marginBottom: 16 }}>
+                Coordenadas geográficas reales (grados decimales). Ubican el equipo en el "Mapa Satelital" del Mapa de Equipos.
               </div>
 
               <div style={{ display: "flex", gap: 10 }}>

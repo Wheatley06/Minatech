@@ -143,7 +143,7 @@ function AlertasRiesgo() {
                         )}
                       </td>
                       <td>
-                        {!a.atendida && (
+                        {!a.atendida && tienePermiso("atenderAlertas") && (
                           <button
                             className="boton-mini"
                             disabled={atendiendoId === a.id}

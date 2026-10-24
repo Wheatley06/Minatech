@@ -66,7 +66,7 @@ function App() {
   return (
     <Layout usuario={sesion.usuario} paginaActual={pagina} irA={irA} cerrarSesion={manejarLogout}>
       {pagina === "dashboard" && <Dashboard />}
-      {pagina === "sensores" && <RegistroSensor />}
+      {pagina === "sensores" && tienePermiso("administrarEquipos") && <RegistroSensor />}
       {pagina === "mapa" && <MapaEquipos />}
       {pagina === "alertas" && <AlertasRiesgo />}
       {pagina === "bitacora" && <BitacoraEventos />}

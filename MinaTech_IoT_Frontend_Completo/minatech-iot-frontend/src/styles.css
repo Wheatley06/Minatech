@@ -1041,3 +1041,37 @@ table.tabla tr:last-child td {
   justify-content: space-between;
   gap: 12px;
 }
+
+
+/* ---- Mapa Satelital (Leaflet) ---- */
+.mapa-satelital {
+  width: 100%;
+  height: 560px;
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  border-radius: 12px;
+  border: 1px solid var(--panel-borde);
+  overflow: hidden;
+}
+.marcador-satelital { background: transparent; border: none; }
+.marcador-satelital-punto {
+  display: block;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border-radius: 50%;
+  border: 2px solid #0a141f;
+}
+.marcador-satelital-etiqueta {
+  position: absolute;
+  left: 14px;
+  top: -10px;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(10, 20, 31, 0.78);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
