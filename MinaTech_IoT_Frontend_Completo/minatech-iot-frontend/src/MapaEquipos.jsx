@@ -56,18 +56,21 @@ function crearCapasBase() {
       maxZoom: 17,
       attribution: "&copy; OpenStreetMap contributors, SRTM | &copy; OpenTopoMap (CC-BY-SA)",
     }),
+    // Esri solo publica este relieve hasta el zoom 13: con maxNativeZoom Leaflet
+    // amplia esas teselas en vez de mostrar el mapa en blanco al acercarse mas.
     "Terreno (Esri)": L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}",
-      { maxZoom: 13, attribution: "Tiles &copy; Esri &mdash; USGS, NOAA" }
+      { maxZoom: 19, maxNativeZoom: 13, attribution: "Tiles &copy; Esri &mdash; USGS, NOAA" }
     ),
     "Calles (Esri)": L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
       { maxZoom: 19, attribution: "Tiles &copy; Esri" }
     ),
-    "Oscuro (CARTO)": L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-      maxZoom: 19,
-      attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
-    }),
+    // Mismo servidor Esri que ya funciona con Satelite/Calles (el de CARTO fallaba).
+    "Oscuro (Esri)": L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+      { maxZoom: 19, maxNativeZoom: 16, attribution: "Tiles &copy; Esri &mdash; HERE, Garmin, FAO, NOAA, USGS" }
+    ),
   };
 }
 
@@ -76,6 +79,8 @@ function MapaSatelital({ equipos, conectividad }) {
   const mapaRef = React.useRef(null);
   const marcadoresRef = React.useRef(null);
   const ajustadoRef = React.useRef(false);
+  const registroRef = React.useRef(new Map());
+  const puntosRef = React.useRef([]); // coordenadas actuales de los equipos, para el boton "centrar"
 
   // Crea el mapa una sola vez (y lo destruye al cambiar de vista).
   useEffectMapa(() => {
@@ -102,62 +107,107 @@ function MapaSatelital({ equipos, conectividad }) {
       }
     });
 
+    // Boton dentro del mapa para volver a encuadrar todos los equipos cuando
+    // el usuario se aleja demasiado.
+    const BotonCentrar = L.Control.extend({
+      options: { position: "topleft" },
+      onAdd() {
+        const contenedor = L.DomUtil.create("div", "leaflet-bar leaflet-control");
+        const boton = L.DomUtil.create("a", "boton-centrar-equipos", contenedor);
+        boton.href = "#";
+        boton.title = "Centrar en mis equipos";
+        boton.setAttribute("role", "button");
+        boton.setAttribute("aria-label", "Centrar en mis equipos");
+        boton.textContent = "◎";
+        L.DomEvent.disableClickPropagation(contenedor);
+        L.DomEvent.on(boton, "click", (ev) => {
+          L.DomEvent.preventDefault(ev);
+          const puntos = puntosRef.current;
+          if (puntos.length === 1) {
+            mapa.setView(puntos[0], Math.max(mapa.getZoom(), 15));
+          } else if (puntos.length > 1) {
+            mapa.fitBounds(L.latLngBounds(puntos), { padding: [60, 60], maxZoom: 16 });
+          }
+        });
+        return contenedor;
+      },
+    });
+    new BotonCentrar().addTo(mapa);
+
     marcadoresRef.current = L.layerGroup().addTo(mapa);
     mapaRef.current = mapa;
     ajustadoRef.current = false;
     return () => {
       mapa.remove();
       mapaRef.current = null;
+      registroRef.current = new Map();
     };
   }, []);
 
-  // Redibuja los marcadores cada vez que cambian los equipos / la conectividad.
+  // Sincroniza los marcadores con los equipos SIN destruirlos en cada
+  // refresco: cada equipo conserva su marcador (por id) y solo se actualiza
+  // su posicion, color y texto. Asi la ubicacion no parpadea ni desaparece y
+  // un popup abierto no se cierra cuando llegan datos nuevos.
   useEffectMapa(() => {
     const mapa = mapaRef.current;
     const grupo = marcadoresRef.current;
     if (!mapa || !grupo) return;
-    grupo.clearLayers();
+    const registro = registroRef.current;
+
+    const conCoordenadas = equipos.filter((eq) => eq.latitud != null && eq.longitud != null);
+    const idsActuales = new Set(conCoordenadas.map((eq) => eq.id));
+
+    // Quita los marcadores de equipos que ya no tienen coordenadas.
+    registro.forEach((marcador, id) => {
+      if (!idsActuales.has(id)) {
+        grupo.removeLayer(marcador);
+        registro.delete(id);
+      }
+    });
 
     const puntos = [];
-    equipos
-      .filter((eq) => eq.latitud != null && eq.longitud != null)
-      .forEach((eq) => {
-        const estado = estadoDeConectividad(conectividad.get(eq.id));
-        const color = COLOR_CONECTIVIDAD[estado];
-        const icono = L.divIcon({
-          className: "marcador-satelital",
-          html:
-            `<span class="marcador-satelital-punto" style="background:${color};box-shadow:0 0 0 4px ${color}55"></span>` +
-            `<span class="marcador-satelital-etiqueta"></span>`,
-          iconSize: [0, 0],
-        });
-        const marcador = L.marker([eq.latitud, eq.longitud], { icon: icono, title: eq.nombre });
-        // Textos con textContent para no inyectar HTML desde los datos.
-        marcador.on("add", () => {
-          const el = marcador.getElement();
-          const etiqueta = el && el.querySelector(".marcador-satelital-etiqueta");
-          if (etiqueta) etiqueta.textContent = eq.nombre;
-        });
-        const nodo = document.createElement("div");
-        const titulo = document.createElement("strong");
-        titulo.textContent = eq.nombre;
-        const detalle = document.createElement("div");
-        detalle.textContent = `${eq.tipoEquipo || "sin tipo"} — ${
-          estado === "todo-bien"
-            ? "todos los sensores en línea"
-            : estado === "parcial"
-            ? "algunos sensores sin señal"
-            : "sin señal"
-        }`;
-        nodo.appendChild(titulo);
-        nodo.appendChild(detalle);
-        marcador.bindPopup(nodo);
-        grupo.addLayer(marcador);
-        puntos.push([eq.latitud, eq.longitud]);
-      });
+    conCoordenadas.forEach((eq) => {
+      const estado = estadoDeConectividad(conectividad.get(eq.id));
+      const color = COLOR_CONECTIVIDAD[estado];
+      const posicion = [eq.latitud, eq.longitud];
+      const textoEstado =
+        estado === "todo-bien"
+          ? "todos los sensores en línea"
+          : estado === "parcial"
+          ? "algunos sensores sin señal"
+          : "sin señal";
 
-    // Solo la primera vez encuadra todos los equipos; en los refrescos
-    // siguientes respeta el zoom/posicion que el usuario ya movio.
+      let marcador = registro.get(eq.id);
+      if (!marcador) {
+        // circleMarker se dibuja en el propio canvas/SVG de Leaflet: no
+        // depende de imagenes ni de CSS externo para verse siempre.
+        marcador = L.circleMarker(posicion, { radius: 9, weight: 3, color: "#0a141f", fillOpacity: 1 });
+        marcador.bindTooltip(eq.nombre, { permanent: true, direction: "right", offset: [10, 0], className: "etiqueta-equipo-mapa" });
+        marcador.bindPopup("");
+        grupo.addLayer(marcador);
+        registro.set(eq.id, marcador);
+      } else {
+        marcador.setLatLng(posicion);
+        marcador.setTooltipContent(eq.nombre);
+      }
+      marcador.setStyle({ fillColor: color });
+
+      const nodo = document.createElement("div");
+      const titulo = document.createElement("strong");
+      titulo.textContent = eq.nombre;
+      const detalle = document.createElement("div");
+      detalle.textContent = `${eq.tipoEquipo || "sin tipo"} — ${textoEstado}`;
+      nodo.appendChild(titulo);
+      nodo.appendChild(detalle);
+      marcador.getPopup().setContent(nodo);
+
+      puntos.push(posicion);
+    });
+
+    puntosRef.current = puntos;
+
+    // Solo la primera vez que hay puntos encuadra todos los equipos; en los
+    // refrescos siguientes respeta el zoom/posicion que el usuario ya movio.
     if (!ajustadoRef.current && puntos.length > 0) {
       mapa.fitBounds(L.latLngBounds(puntos), { padding: [60, 60], maxZoom: 16 });
       ajustadoRef.current = true;

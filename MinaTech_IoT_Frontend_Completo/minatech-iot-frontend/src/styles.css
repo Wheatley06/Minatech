@@ -1075,3 +1075,27 @@ table.tabla tr:last-child td {
   padding: 2px 8px;
   border-radius: 6px;
 }
+
+.etiqueta-equipo-mapa {
+  background: rgba(10, 20, 31, 0.82);
+  border: none;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: none;
+}
+.etiqueta-equipo-mapa::before { display: none; }
+
+.boton-centrar-equipos {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 30px;
+  text-decoration: none;
+  color: #0a141f !important;
+  cursor: pointer;
+}
