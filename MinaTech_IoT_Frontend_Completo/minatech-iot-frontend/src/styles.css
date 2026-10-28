@@ -333,12 +333,8 @@ body {
   background-position: 0 0, -1px -1px, -1px -1px, 0 0;
 }
 
+/* Todas las pantallas internas usan todo el ancho disponible a la derecha del menu, a cualquier resolucion. */
 .contenido > * {
-  max-width: 1200px;
-}
-
-/* Paginas que deben usar todo el ancho disponible (p. ej. el Mapa de Equipos), a cualquier resolucion. */
-.contenido > .pagina-ancha {
   max-width: none;
   width: 100%;
 }
