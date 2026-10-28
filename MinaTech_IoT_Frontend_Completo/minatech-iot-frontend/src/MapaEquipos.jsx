@@ -82,11 +82,11 @@ function crearCapasBase() {
       maxZoom: 17,
       attribution: "&copy; OpenStreetMap contributors, SRTM | &copy; OpenTopoMap (CC-BY-SA)",
     }),
-    // Esri solo publica este relieve hasta el zoom 13: con maxNativeZoom Leaflet
+    // Esri solo publica este relieve hasta el zoom 9 (a partir de ~10 km de escala ya no hay teselas): con maxNativeZoom Leaflet
     // amplia esas teselas en vez de mostrar el mapa en blanco al acercarse mas.
     "Terreno (Esri)": L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}",
-      { maxZoom: 19, maxNativeZoom: 13, attribution: "Tiles &copy; Esri &mdash; USGS, NOAA" }
+      { maxZoom: 19, maxNativeZoom: 9, attribution: "Tiles &copy; Esri &mdash; USGS, NOAA" }
     ),
     "Calles (Esri)": L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
