@@ -36,6 +36,32 @@ function estadoDeConectividad(conteo) {
 }
 
 
+/**
+ * Devuelve la altura (px) que queda desde el borde superior del elemento
+ * hasta el final de la ventana, menos "reserva" (leyenda + margenes de
+ * abajo). Se recalcula al cambiar el tamaño de la ventana, asi el mapa
+ * siempre llena el espacio restante sin importar la pantalla.
+ */
+function useAlturaRestante(ref, reserva, minimo) {
+  const [altura, setAltura] = useStateMapa(minimo);
+  useEffectMapa(() => {
+    function calcular() {
+      if (!ref.current) return;
+      const arriba = ref.current.getBoundingClientRect().top;
+      setAltura(Math.max(minimo, Math.round(window.innerHeight - arriba - reserva)));
+    }
+    calcular();
+    window.addEventListener("resize", calcular);
+    // un segundo calculo tras pintar, por si el encabezado cambia de alto al cargar
+    const t = setTimeout(calcular, 150);
+    return () => {
+      window.removeEventListener("resize", calcular);
+      clearTimeout(t);
+    };
+  });
+  return altura;
+}
+
 // Capas base del Mapa Satelital: servidores de teselas publicos, gratis y
 // sin API key (a diferencia de Google Maps). Mismo enfoque que el "worldmap"
 // de Node-RED: un selector de capas con satelite, calles, relieve, etc.
@@ -134,10 +160,18 @@ function MapaSatelital({ equipos, conectividad }) {
     });
     new BotonCentrar().addTo(mapa);
 
+    // Si el contenedor cambia de tamaño (ventana, altura calculada), Leaflet debe recalcular.
+    let observador = null;
+    if (typeof ResizeObserver !== "undefined") {
+      observador = new ResizeObserver(() => mapa.invalidateSize());
+      observador.observe(contenedorRef.current);
+    }
+
     marcadoresRef.current = L.layerGroup().addTo(mapa);
     mapaRef.current = mapa;
     ajustadoRef.current = false;
     return () => {
+      if (observador) observador.disconnect();
       mapa.remove();
       mapaRef.current = null;
       registroRef.current = new Map();
@@ -232,6 +266,9 @@ function MapaEquipos() {
   const [error, setError] = useStateMapa("");
   // "plano" (esquemático, por defecto) | "satelital" (mapa geográfico real)
   const [vista, setVista] = useStateMapa("plano");
+  const visorRef = React.useRef(null);
+  // 110 px de reserva: leyenda + relleno de la tarjeta + margen inferior de la pagina.
+  const alturaVisor = useAlturaRestante(visorRef, 110, 460);
 
   async function cargar() {
     try {
@@ -257,7 +294,7 @@ function MapaEquipos() {
   const sinPosicion = equipos.filter((eq) => eq.posX == null || eq.posY == null);
 
   return (
-    <div>
+    <div className="pagina-ancha">
       <div
         className="contenido-header"
         style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}
@@ -288,7 +325,9 @@ function MapaEquipos() {
         <div className="tarjeta">
           {vista === "satelital" ? (
             <>
-              <MapaSatelital equipos={equipos} conectividad={conectividad} />
+              <div ref={visorRef} className="visor-mapa" style={{ height: alturaVisor }}>
+                <MapaSatelital equipos={equipos} conectividad={conectividad} />
+              </div>
               <div className="plano-leyenda">
                 <span><span className="punto" style={{ background: "#22c55e" }} /> Todos los sensores en línea</span>
                 <span><span className="punto" style={{ background: "#f59e0b" }} /> Algunos sensores sin señal</span>
@@ -304,6 +343,7 @@ function MapaEquipos() {
             </>
           ) : (
             <>
+          <div ref={visorRef} className="visor-mapa" style={{ height: alturaVisor }}>
           <div className="plano-equipos">
             {posicionados.map((eq) => {
               const estado = estadoDeConectividad(conectividad.get(eq.id));
@@ -319,6 +359,7 @@ function MapaEquipos() {
                 </div>
               );
             })}
+          </div>
           </div>
 
           <div className="plano-leyenda">
