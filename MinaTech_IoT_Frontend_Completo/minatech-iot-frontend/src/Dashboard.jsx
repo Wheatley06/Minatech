@@ -190,7 +190,7 @@ function Dashboard() {
                 <div className="tarjeta-variable-top">
                   <div>
                     <div className="tarjeta-variable-nombre">{l.sensorNombre}</div>
-                    <div style={{ fontSize: 12, color: "var(--panel-texto-secundario)" }}>
+                    <div style={{ fontSize: "calc(12px + var(--aumento-letra))", color: "var(--panel-texto-secundario)" }}>
                       {l.equipoNombre || "Sin equipo"}
                     </div>
                   </div>

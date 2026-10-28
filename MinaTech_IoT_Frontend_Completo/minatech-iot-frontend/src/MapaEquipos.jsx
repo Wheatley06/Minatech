@@ -334,7 +334,7 @@ function MapaEquipos() {
                 <span><span className="punto" style={{ background: "#ef4444" }} /> Sin señal / sin sensores</span>
               </div>
               {equipos.some((eq) => eq.latitud == null || eq.longitud == null) && (
-                <div style={{ fontSize: 12, color: "var(--panel-texto-secundario)", marginTop: 10 }}>
+                <div style={{ fontSize: "calc(12px + var(--aumento-letra))", color: "var(--panel-texto-secundario)", marginTop: 10 }}>
                   Sin coordenadas (no aparecen en este mapa):{" "}
                   {equipos.filter((eq) => eq.latitud == null || eq.longitud == null).map((eq) => eq.nombre).join(", ")}.
                   Asígnales latitud y longitud en "Equipos y Sensores" → "Equipos mecánicos".
@@ -384,7 +384,7 @@ function MapaEquipos() {
                   );
                 })}
               </div>
-              <div style={{ fontSize: 12, color: "var(--panel-texto-secundario)", marginTop: 10 }}>
+              <div style={{ fontSize: "calc(12px + var(--aumento-letra))", color: "var(--panel-texto-secundario)", marginTop: 10 }}>
                 Asígnales una posición X/Y en "Equipos y Sensores" → "Equipos mecánicos" para ubicarlos en el plano.
               </div>
             </>

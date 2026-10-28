@@ -287,7 +287,7 @@ function RegistroSensor() {
                     ))}
                   </select>
                   {sensorEditandoId && (
-                    <div style={{ fontSize: 12, color: "var(--panel-texto-secundario)", marginTop: 4 }}>
+                    <div style={{ fontSize: "calc(12px + var(--aumento-letra))", color: "var(--panel-texto-secundario)", marginTop: 4 }}>
                       La variable MQTT no se puede cambiar: es la llave que enlaza la telemetría entrante con este sensor.
                     </div>
                   )}
@@ -421,7 +421,7 @@ function RegistroSensor() {
                   placeholder="ej. 101"
                 />
                 {!equipoEditandoId && (
-                  <div style={{ fontSize: 12, color: "var(--panel-texto-secundario)", marginTop: 4 }}>
+                  <div style={{ fontSize: "calc(12px + var(--aumento-letra))", color: "var(--panel-texto-secundario)", marginTop: 4 }}>
                     Debe coincidir con el "equipo_id" que ese equipo use en su telemetría MQTT.
                   </div>
                 )}
@@ -486,7 +486,7 @@ function RegistroSensor() {
                   />
                 </div>
               </div>
-              <div style={{ fontSize: 12, color: "var(--panel-texto-secundario)", marginTop: -8, marginBottom: 16 }}>
+              <div style={{ fontSize: "calc(12px + var(--aumento-letra))", color: "var(--panel-texto-secundario)", marginTop: -8, marginBottom: 16 }}>
                 Define dónde aparece este equipo en "Mapa de Equipos" (0 = izquierda/arriba, 100 = derecha/abajo). Si lo
                 dejas vacío, aparece en la fila de equipos "sin posición" al pie del mapa.
               </div>
@@ -517,7 +517,7 @@ function RegistroSensor() {
                   />
                 </div>
               </div>
-              <div style={{ fontSize: 12, color: "var(--panel-texto-secundario)", marginTop: -8, marginBottom: 16 }}>
+              <div style={{ fontSize: "calc(12px + var(--aumento-letra))", color: "var(--panel-texto-secundario)", marginTop: -8, marginBottom: 16 }}>
                 Coordenadas geográficas reales (grados decimales). Ubican el equipo en el "Mapa Satelital" del Mapa de Equipos.
               </div>
 

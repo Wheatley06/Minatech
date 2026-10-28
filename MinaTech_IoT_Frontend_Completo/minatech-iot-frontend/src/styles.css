@@ -1,4 +1,6 @@
 :root {
+  /* Aumento general del tamano de letra: se suma a cada font-size. Se puede cambiar por pantalla (p. ej. movil) con un media query. */
+  --aumento-letra: 2px;
   --azul-oscuro: #101b2d;
   --azul-medio: #16243b;
   --teal: #14b8a6;
@@ -35,6 +37,7 @@
 
 body {
   margin: 0;
+  font-size: calc(16px + var(--aumento-letra));
   font-family: "Segoe UI", Roboto, Arial, sans-serif;
   background: var(--gris-fondo);
   color: var(--texto-principal);
@@ -88,13 +91,13 @@ body {
 
 .auth-logo-texto {
   font-weight: 700;
-  font-size: 18px;
+  font-size: calc(18px + var(--aumento-letra));
   color: var(--azul-oscuro);
 }
 
 .auth-subtitulo {
   color: var(--texto-secundario);
-  font-size: 14px;
+  font-size: calc(14px + var(--aumento-letra));
   margin-bottom: 28px;
 }
 
@@ -104,7 +107,7 @@ body {
 
 .campo label {
   display: block;
-  font-size: 13px;
+  font-size: calc(13px + var(--aumento-letra));
   font-weight: 600;
   margin-bottom: 6px;
   color: var(--texto-principal);
@@ -117,7 +120,7 @@ body {
   padding: 10px 12px;
   border: 1px solid var(--gris-borde);
   border-radius: 8px;
-  font-size: 14px;
+  font-size: calc(14px + var(--aumento-letra));
   background: #fff;
   color: var(--texto-principal);
 }
@@ -143,7 +146,7 @@ body {
   border-radius: 8px;
   background: var(--teal);
   color: #fff;
-  font-size: 15px;
+  font-size: calc(15px + var(--aumento-letra));
   font-weight: 600;
   cursor: pointer;
   transition: background 0.15s ease;
@@ -164,7 +167,7 @@ body {
   border-radius: 8px;
   background: #fff;
   color: var(--texto-principal);
-  font-size: 14px;
+  font-size: calc(14px + var(--aumento-letra));
   font-weight: 600;
   cursor: pointer;
 }
@@ -172,7 +175,7 @@ body {
 .enlace-auth {
   text-align: center;
   margin-top: 20px;
-  font-size: 14px;
+  font-size: calc(14px + var(--aumento-letra));
   color: var(--texto-secundario);
 }
 
@@ -183,7 +186,7 @@ body {
   font-weight: 600;
   cursor: pointer;
   padding: 0;
-  font-size: 14px;
+  font-size: calc(14px + var(--aumento-letra));
 }
 
 .mensaje-error {
@@ -192,7 +195,7 @@ body {
   color: #b91c1c;
   padding: 10px 12px;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: calc(13px + var(--aumento-letra));
   margin-bottom: 16px;
 }
 
@@ -202,7 +205,7 @@ body {
   color: #15803d;
   padding: 10px 12px;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: calc(13px + var(--aumento-letra));
   margin-bottom: 16px;
 }
 
@@ -245,7 +248,7 @@ body {
 .sidebar-logo-texto {
   font-weight: 700;
   color: #fff;
-  font-size: 16px;
+  font-size: calc(16px + var(--aumento-letra));
 }
 
 .sidebar-nav {
@@ -265,7 +268,7 @@ body {
   background: transparent;
   color: #cbd5e1;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: calc(14px + var(--aumento-letra));
   text-align: left;
   cursor: pointer;
   transition: background 0.15s ease;
@@ -287,14 +290,14 @@ body {
 }
 
 .sidebar-usuario {
-  font-size: 13px;
+  font-size: calc(13px + var(--aumento-letra));
   margin-bottom: 10px;
 }
 
 .sidebar-usuario strong {
   display: block;
   color: #fff;
-  font-size: 14px;
+  font-size: calc(14px + var(--aumento-letra));
 }
 
 .sidebar-usuario span {
@@ -309,7 +312,7 @@ body {
   color: #cbd5e1;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: calc(13px + var(--aumento-letra));
 }
 
 .boton-salir:hover {
@@ -344,7 +347,7 @@ body {
 }
 
 .contenido-header h1 {
-  font-size: 22px;
+  font-size: calc(22px + var(--aumento-letra));
   margin: 0 0 4px;
   color: var(--panel-texto);
   letter-spacing: -0.01em;
@@ -353,7 +356,7 @@ body {
 .contenido-header p {
   margin: 0;
   color: var(--panel-texto-secundario);
-  font-size: 14px;
+  font-size: calc(14px + var(--aumento-letra));
 }
 
 /* ---------- Tarjetas y grillas ---------- */
@@ -385,7 +388,7 @@ body {
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .grilla-dashboard .tarjeta-variable-icono { flex-shrink: 0; }
-.grilla-dashboard .tarjeta-variable-valor { font-size: clamp(20px, 1.9vw, 28px); }
+.grilla-dashboard .tarjeta-variable-valor { font-size: calc(clamp(20px, 1.9vw, 28px) + var(--aumento-letra)); }
 .grilla-dashboard .tarjeta-variable-footer { flex-wrap: wrap; row-gap: 6px; }
 
 .tarjeta-variable {
@@ -437,13 +440,13 @@ body {
 }
 
 .tarjeta-variable-nombre {
-  font-size: 13px;
+  font-size: calc(13px + var(--aumento-letra));
   color: var(--panel-texto-secundario);
   font-weight: 600;
 }
 
 .tarjeta-variable-valor {
-  font-size: 26px;
+  font-size: calc(26px + var(--aumento-letra));
   font-weight: 700;
   color: var(--panel-texto);
   font-family: var(--fuente-mono);
@@ -451,7 +454,7 @@ body {
 }
 
 .tarjeta-variable-unidad {
-  font-size: 13px;
+  font-size: calc(13px + var(--aumento-letra));
   color: var(--panel-texto-secundario);
   margin-left: 4px;
   font-weight: 400;
@@ -459,7 +462,7 @@ body {
 
 .tarjeta-variable-footer {
   margin-top: 10px;
-  font-size: 12px;
+  font-size: calc(12px + var(--aumento-letra));
   color: var(--panel-texto-secundario);
   display: flex;
   align-items: center;
@@ -493,7 +496,7 @@ body {
 .stat-mini-fila {
   display: flex;
   gap: 14px;
-  font-size: 13px;
+  font-size: calc(13px + var(--aumento-letra));
   color: var(--panel-texto);
   font-family: var(--fuente-mono);
   font-variant-numeric: tabular-nums;
@@ -523,7 +526,7 @@ body {
   border: 1px solid var(--panel-borde);
   border-radius: 999px;
   padding: 7px 14px 7px 10px;
-  font-size: 13px;
+  font-size: calc(13px + var(--aumento-letra));
   color: var(--panel-texto-secundario);
 }
 
@@ -574,7 +577,7 @@ body {
 .nodo-equipo-nombre {
   font-weight: 700;
   color: var(--panel-texto);
-  font-size: 15px;
+  font-size: calc(15px + var(--aumento-letra));
 }
 
 .nodo-equipo-sensores {
@@ -588,7 +591,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12.5px;
+  font-size: calc(12.5px + var(--aumento-letra));
   color: var(--panel-texto-secundario);
 }
 
@@ -647,11 +650,11 @@ body {
 
 .evento-tiempo-texto {
   color: var(--panel-texto);
-  font-size: 14px;
+  font-size: calc(14px + var(--aumento-letra));
 }
 
 .evento-tiempo-hora {
-  font-size: 12px;
+  font-size: calc(12px + var(--aumento-letra));
   color: var(--panel-texto-secundario);
   font-family: var(--fuente-mono);
 }
@@ -661,7 +664,7 @@ body {
   align-items: center;
   padding: 3px 10px;
   border-radius: 999px;
-  font-size: 12px;
+  font-size: calc(12px + var(--aumento-letra));
   font-weight: 600;
   border: 1px solid transparent;
 }
@@ -685,14 +688,14 @@ body {
 table.tabla {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: calc(14px + var(--aumento-letra));
 }
 
 table.tabla th {
   text-align: left;
   padding: 10px 14px;
   color: var(--panel-texto-secundario);
-  font-size: 12px;
+  font-size: calc(12px + var(--aumento-letra));
   text-transform: uppercase;
   letter-spacing: 0.03em;
   border-bottom: 1px solid var(--panel-borde);
@@ -727,7 +730,7 @@ table.tabla tr:last-child td {
   border-radius: 999px;
   border: 1px solid var(--panel-borde-fuerte);
   background: rgba(148, 197, 217, 0.06);
-  font-size: 13px;
+  font-size: calc(13px + var(--aumento-letra));
   font-weight: 600;
   cursor: pointer;
   color: var(--panel-texto-secundario);
@@ -747,7 +750,7 @@ table.tabla tr:last-child td {
 
 .boton-mini {
   padding: 6px 12px;
-  font-size: 12px;
+  font-size: calc(12px + var(--aumento-letra));
   border-radius: 6px;
   border: none;
   background: var(--teal);
@@ -822,14 +825,14 @@ table.tabla tr:last-child td {
 
 .texto-vacio {
   color: var(--panel-texto-secundario);
-  font-size: 14px;
+  font-size: calc(14px + var(--aumento-letra));
   padding: 24px 0;
   text-align: center;
 }
 
 .cargando {
   color: var(--panel-texto-secundario);
-  font-size: 14px;
+  font-size: calc(14px + var(--aumento-letra));
   padding: 24px 0;
   text-align: center;
 }
@@ -851,7 +854,7 @@ table.tabla tr:last-child td {
   border-radius: 10px;
   background: var(--panel-superficie);
   border: 1px solid var(--panel-borde);
-  font-size: 13px;
+  font-size: calc(13px + var(--aumento-letra));
   color: var(--panel-texto-secundario);
 }
 
@@ -895,7 +898,7 @@ table.tabla tr:last-child td {
 }
 
 .stat-chip-etiqueta {
-  font-size: 11px;
+  font-size: calc(11px + var(--aumento-letra));
   color: var(--panel-texto-secundario);
   margin-bottom: 2px;
 }
@@ -903,7 +906,7 @@ table.tabla tr:last-child td {
 .stat-chip-valor {
   font-family: var(--fuente-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 17px;
+  font-size: calc(17px + var(--aumento-letra));
   font-weight: 700;
   color: var(--panel-texto);
 }
@@ -959,7 +962,7 @@ table.tabla tr:last-child td {
 .nodo-equipo.sin-senal .nodo-equipo-punto { background: #ef4444; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18); }
 
 .nodo-equipo-etiqueta {
-  font-size: 12px;
+  font-size: calc(12px + var(--aumento-letra));
   font-weight: 600;
   color: var(--panel-texto);
   background: rgba(10, 20, 31, 0.85);
@@ -974,7 +977,7 @@ table.tabla tr:last-child td {
   flex-wrap: wrap;
   gap: 16px;
   margin-top: 12px;
-  font-size: 13px;
+  font-size: calc(13px + var(--aumento-letra));
   color: var(--panel-texto-secundario);
 }
 
@@ -1036,19 +1039,19 @@ table.tabla tr:last-child td {
 }
 
 .evento-titulo {
-  font-size: 14px;
+  font-size: calc(14px + var(--aumento-letra));
   font-weight: 600;
   color: var(--panel-texto);
   margin-bottom: 2px;
 }
 
 .evento-descripcion {
-  font-size: 13px;
+  font-size: calc(13px + var(--aumento-letra));
   color: var(--panel-texto-secundario);
 }
 
 .evento-fecha {
-  font-size: 12px;
+  font-size: calc(12px + var(--aumento-letra));
   color: var(--panel-texto-secundario);
   font-family: var(--fuente-mono);
   font-variant-numeric: tabular-nums;
@@ -1089,7 +1092,7 @@ table.tabla tr:last-child td {
   left: 14px;
   top: -10px;
   white-space: nowrap;
-  font-size: 12px;
+  font-size: calc(12px + var(--aumento-letra));
   font-weight: 600;
   color: #fff;
   background: rgba(10, 20, 31, 0.78);
@@ -1101,7 +1104,7 @@ table.tabla tr:last-child td {
   background: rgba(10, 20, 31, 0.82);
   border: none;
   color: #fff;
-  font-size: 12px;
+  font-size: calc(12px + var(--aumento-letra));
   font-weight: 600;
   box-shadow: none;
 }
@@ -1113,7 +1116,7 @@ table.tabla tr:last-child td {
   justify-content: center;
   width: 30px;
   height: 30px;
-  font-size: 20px;
+  font-size: calc(20px + var(--aumento-letra));
   font-weight: 700;
   line-height: 30px;
   text-decoration: none;

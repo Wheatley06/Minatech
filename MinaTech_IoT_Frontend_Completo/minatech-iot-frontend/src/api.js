@@ -114,3 +114,9 @@ const Api = {
 
   eventos: (limite = 100) => apiFetch(`/api/eventos?limite=${limite}`),
 };
+
+/** Tamano de letra base + el aumento global (--aumento-letra de styles.css); para las graficas ApexCharts, que no leen CSS. */
+function tamLetra(base) {
+  const extra = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--aumento-letra")) || 0;
+  return (base + extra) + "px";
+}

@@ -43,7 +43,7 @@ function anotacionesUmbral(sensores, color) {
       strokeDashArray: 5,
       label: {
         text: `Umbral ${s.nombre}`,
-        style: { color: "#0a141f", background: color, fontSize: "11px" },
+        style: { color: "#0a141f", background: color, fontSize: tamLetra(11) },
         position: "left",
       },
     }));
@@ -53,7 +53,7 @@ function anotacionesUmbral(sensores, color) {
 function opcionesLinea(titulo, unidad, colores, annotations) {
   return {
     chart: { animations: { easing: "easeinout", speed: 400 }, foreColor: "#8fa6bd" },
-    title: { text: titulo, style: { fontSize: "14px", fontWeight: 600, color: "#e7eef5" } },
+    title: { text: titulo, style: { fontSize: tamLetra(14), fontWeight: 600, color: "#e7eef5" } },
     colors: colores,
     stroke: { curve: "smooth", width: 2.5 },
     dataLabels: { enabled: false },
@@ -161,13 +161,13 @@ function GraficasVibracionGas() {
             <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
               {statsVibracion.v1 && (
                 <div>
-                  <span style={{ fontSize: 12, color: "var(--panel-texto-secundario)" }}>Vibración 1</span>
+                  <span style={{ fontSize: "calc(12px + var(--aumento-letra))", color: "var(--panel-texto-secundario)" }}>Vibración 1</span>
                   <FilaEstadisticas stats={statsVibracion.v1} unidad={unidades.vibracion} />
                 </div>
               )}
               {statsVibracion.v2 && (
                 <div>
-                  <span style={{ fontSize: 12, color: "var(--panel-texto-secundario)" }}>Vibración 2</span>
+                  <span style={{ fontSize: "calc(12px + var(--aumento-letra))", color: "var(--panel-texto-secundario)" }}>Vibración 2</span>
                   <FilaEstadisticas stats={statsVibracion.v2} unidad={unidades.vibracion} />
                 </div>
               )}

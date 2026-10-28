@@ -41,7 +41,7 @@ function anotacionesUmbral(sensores, color) {
       strokeDashArray: 5,
       label: {
         text: `Umbral ${s.nombre}`,
-        style: { color: "#0a141f", background: color, fontSize: "11px" },
+        style: { color: "#0a141f", background: color, fontSize: tamLetra(11) },
         position: "left",
       },
     }));
@@ -86,9 +86,9 @@ function opcionesGauge(nombre, datos, color) {
         hollow: { size: "55%", background: "transparent" },
         track: { background: "rgba(148, 197, 217, 0.12)", strokeWidth: "100%" },
         dataLabels: {
-          name: { text: nombre, fontSize: "13px", color: "#8fa6bd", offsetY: -8 },
+          name: { text: nombre, fontSize: tamLetra(13), color: "#8fa6bd", offsetY: -8 },
           value: {
-            fontSize: "22px",
+            fontSize: tamLetra(22),
             fontWeight: 700,
             color: "#e7eef5",
             offsetY: 4,
@@ -158,7 +158,7 @@ function GraficasPresionTemperatura() {
 
   const opcionesArea = {
     chart: { animations: { easing: "easeinout", speed: 400 }, foreColor: "#8fa6bd" },
-    title: { text: "Temperatura (1 y 2)", style: { fontSize: "14px", fontWeight: 600, color: "#e7eef5" } },
+    title: { text: "Temperatura (1 y 2)", style: { fontSize: tamLetra(14), fontWeight: 600, color: "#e7eef5" } },
     colors: [COLOR_TEMPERATURA_1, COLOR_TEMPERATURA_2],
     stroke: { curve: "smooth", width: 2 },
     fill: { type: "gradient", gradient: { opacityFrom: 0.4, opacityTo: 0.04 } },
@@ -216,13 +216,13 @@ function GraficasPresionTemperatura() {
             <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
               {statsTemp.t1 && (
                 <div>
-                  <span style={{ fontSize: 12, color: "var(--panel-texto-secundario)" }}>Temperatura 1</span>
+                  <span style={{ fontSize: "calc(12px + var(--aumento-letra))", color: "var(--panel-texto-secundario)" }}>Temperatura 1</span>
                   <FilaEstadisticas stats={statsTemp.t1} unidad={unidadTemp} />
                 </div>
               )}
               {statsTemp.t2 && (
                 <div>
-                  <span style={{ fontSize: 12, color: "var(--panel-texto-secundario)" }}>Temperatura 2</span>
+                  <span style={{ fontSize: "calc(12px + var(--aumento-letra))", color: "var(--panel-texto-secundario)" }}>Temperatura 2</span>
                   <FilaEstadisticas stats={statsTemp.t2} unidad={unidadTemp} />
                 </div>
               )}
