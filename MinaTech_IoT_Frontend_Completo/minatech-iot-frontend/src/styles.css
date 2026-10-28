@@ -368,10 +368,25 @@ body {
 
 .grilla-dashboard {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
   margin-bottom: 24px;
 }
+
+/* 4 tarjetas por fila en pantallas normales/anchas; baja a 3, 2 y 1 solo cuando el ancho no alcanza. */
+@media (max-width: 1500px) { .grilla-dashboard { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 1150px) { .grilla-dashboard { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .grilla-dashboard { grid-template-columns: minmax(0, 1fr); } }
+
+.grilla-dashboard .tarjeta-variable { min-width: 0; padding: 16px; }
+.grilla-dashboard .tarjeta-variable-top > div:first-child { min-width: 0; flex: 1; padding-right: 10px; }
+.grilla-dashboard .tarjeta-variable-nombre,
+.grilla-dashboard .tarjeta-variable-top > div:first-child > div:last-child {
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.grilla-dashboard .tarjeta-variable-icono { flex-shrink: 0; }
+.grilla-dashboard .tarjeta-variable-valor { font-size: clamp(20px, 1.9vw, 28px); }
+.grilla-dashboard .tarjeta-variable-footer { flex-wrap: wrap; row-gap: 6px; }
 
 .tarjeta-variable {
   background: linear-gradient(180deg, var(--panel-superficie-hover), var(--panel-superficie));
