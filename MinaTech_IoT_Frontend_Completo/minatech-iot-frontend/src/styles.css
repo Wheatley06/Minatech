@@ -1,6 +1,6 @@
 :root {
   /* Aumento general del tamano de letra: se suma a cada font-size. Se puede cambiar por pantalla (p. ej. movil) con un media query. */
-  --aumento-letra: 2px;
+  --aumento-letra: 4px;
   --azul-oscuro: #101b2d;
   --azul-medio: #16243b;
   --teal: #14b8a6;
